@@ -296,11 +296,26 @@ app.get('/pg/:page/:deger',ekran_sayisi,function(req, res){
 });
 
 app.get('/adm/:page',nodekk.ozelbolge,admin_check,function(req,res){
-  if(req.session.logincallbackurl != undefined)
-    res.render('dashboard/'+req.params.page,{izinler:JSON.stringify(config.izinler),user : JSON.stringify(req.session.user)});
-  else
-    res.render('dashboard/'+req.params.page,{izinler:JSON.stringify(config.izinler),user : req.session.user});
-  console.log(req.session.user);
+  var user = req.session.user;
+
+  mdb.model('user').find({kk_id:user._id},function(e,adm){
+    if((adm != undefined) && (adm[0].role[0].role_name == "admin")){
+      if(req.session.logincallbackurl != undefined)
+        res.render('dashboard/'+req.params.page,{izinler:JSON.stringify(config.izinler),user : JSON.stringify(user)});
+      else
+        res.render('dashboard/'+req.params.page,{izinler:JSON.stringify(config.izinler),user : user});
+    }
+    else {
+      if(req.session.logincallbackurl != undefined)
+        res.render('index',{user : JSON.stringify(req.session.user)});
+      else
+        res.redirect('/');
+    }  
+    
+  });
+    
+
+  
 });
 
 app.get('/pg/:page',function(req,res){
