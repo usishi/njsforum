@@ -1,0 +1,82 @@
+footer(role='contentinfo')
+          // Footer block
+          #footerContent
+            // About us , links, twitter, recent posts layout
+            .row
+              .col-md-3.col-sm-6.recent-row
+                .side-segment
+                  h3 Online
+                .recent-topic.text-overflow.cevrimici
+
+              
+              .col-md-3.col-sm-6.recent-row
+                .side-segment
+                  h3 Konular 
+                #example1
+                  ul.navList.konuslar
+              .col-md-3.col-sm-6.recent-row
+                .side-segment
+
+                  h3 Mesajlar
+                ul.navList.mesajs
+                              
+              .col-md-3.col-sm-6.recent-row
+                .side-segment
+                  h3 Hakkımızda 
+                p
+                  | Usishi  Bilişim
+          .row.bottomLinks
+            .col-md-12
+              .pull-left
+                small
+                  | Forum Usishi Bilişim Tarafından Geliştirmektedir.
+              .pull-right
+                small
+                  | Usishi Bilişim
+                  |  &copy;Usishi Bilişim 2015
+block js 
+  script.
+    $(document).ready(function(){
+          sonKonular();
+          sonMesajlar();
+          sonGiris();
+          //online();
+    })
+    function sonKonular(){
+        $('.konuslar').html('');
+       postData('/ajax/popularKonular',{},function(veri){
+         veri.forEach(function(cvp){
+           $('.konuslar').append('<li><a href="/pg/konudetay/'+cvp._id+'" data-original-title="" title="">'+cvp.konu_baslik+'</a></li>');
+          })
+       });
+    }
+    function sonMesajlar(){
+       postData('/ajax/mesajListesi',{},function(retVal){
+          retVal.forEach(function(cvp){
+             var date =cvp.ekleme_zamani.split("/");
+            $('.mesajs').append('<li style="position:relative;"><a href="/pg/profil/'+cvp.ekleyen.id+'" data-original-title="" title="">'+cvp.ekleyen.name+'</a>&nbsp;&nbsp;<span style="position:absolute; top:0px; right:0;"><i class="fa fa-clock-o"></i> <small>'+date[1]+'.'+date[0]+'.'+date[2]+'</small></span></li>');
+          });          
+       });
+    }
+   
+    function sonGiris(){
+      var us=0,sayac=0,eleman=[];
+      $('.cevrimici').html();
+      postData('/ajax/sonOnline',{},function(veri){
+        console.log(veri.length);
+         veri.forEach(function(cvp){
+            
+                if(cvp.user_name !=null){
+                 sayac++;
+                    $('.cevrimici').append('<p><i class="fa fa-user"></i> &nbsp;&nbsp; <a href="" data-original-title="" title="">'+cvp.user_name+'</a></p>');
+                }else{
+                  us++;
+                  eleman.push(cvp.user);
+                  if((veri.length -sayac) == us){
+                    $('.cevrimici').append('<p><i class="fa fa-user"></i>&nbsp;Ziyaretçi &nbsp;'+eleman.length+'</p>');
+                  }
+      
+               }
+         });
+      });
+    } 

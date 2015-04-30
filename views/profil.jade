@@ -1,0 +1,350 @@
+extends ./parts/_layout
+block content
+    include ./parts/top
+    .row(style="margin:17px -13px !important;")
+      .col-sm-4
+        .profile-sidebar
+          .portlet.light.profile-sidebar-portlet
+            .profile-userpic
+              img.img-responsive( alt='')#erka
+            .profile-usertitle
+              .yenile
+              .profile-usertitle-name
+                
+              .profile-usertitle-job
+                
+            
+        .portlet.light
+          .row.list-separated.profile-stat
+            .col-md-4.col-sm-4.col-xs-6
+              .uppercase.profile-stat-title
+                span#yorum
+              .uppercase.profile-stat-text
+                | Yorum Sayısı
+            .col-md-4.col-sm-4.col-xs-6
+              .uppercase.profile-stat-title
+                span#msjsay
+              .uppercase.profile-stat-text
+                | Mesaj Sayısı
+            .col-md-4.col-sm-4.col-xs-6
+              .uppercase.profile-stat-title
+                span#konusayisi
+              .uppercase.profile-stat-text
+                | Açtığı Konu Sayısı
+            .col-md-4.col-sm-4.col-xs-6
+              .uppercase.profile-stat-title
+                span#nowdate
+              .uppercase.profile-stat-text
+                | 
+            .col-md-4.col-sm-4.col-xs-6
+              .uppercase.profile-stat-title
+                span#status
+              .uppercase.profile-stat-text
+                | 
+          div
+            h4.profile-desc-title HAKKINDA
+            span#statusabout
+          
+      .col-sm-8.profils
+        .portlet.light
+          .portlet-title.tabbable-line
+            .caption.caption-md
+              i.icon-globe.theme-font.hide
+              span.caption-subject.font-blue-madison.bold.uppercase Hesap Profili
+            ul.nav.nav-tabs
+              li.active
+                a(href='#tab_1_1', data-toggle='tab') Kişisel Bilgiler
+              li
+                a(href='#tab_1_3', data-toggle='tab') Şifre Değiştir
+          .portlet-body
+            .tab-content
+              #tab_1_1.tab-pane.active
+                form(role='form', action='#')
+                  .form-group
+                    label.control-label Adınız:
+                    input.form-control(type='text')#name
+                  .form-group
+                    label.control-label Soyadınız:
+                    input.form-control(type='text')#surname
+                  .form-group
+                    label.control-label E-mail:
+                    //input.form-control(type='text',disabled)#email
+                    span#email
+                  .form-group                    
+                      label.control-label Doğum Tarihi:
+                      span#date
+                      .row
+                        .col-xs-3
+                          select#dobday.form-control.input-lg
+                        .col-xs-3
+                          select#dobmonth.form-control.input-lg 
+                        .col-xs-3
+                          select#dobyear.form-control.input-lg
+                  .form-group
+                    label.control-label Rol:
+                    //input.form-control(type='text',disabled)#role
+                    span#role
+                  .form-group
+                    label.control-label Hakkında:
+                    textarea.form-control(rows='3')#about
+                  
+                  .margiv-top-20
+                   button.btn.btn-success.btn.btn-success(type='button',style="display:block;",onclick="kaydet();") Kaydet                     
+              #tab_1_3.tab-pane
+                form(action='#')
+                  .form-group
+                    label.control-label Eski Şifre:
+                    input.form-control(type='password')#eskisifre
+                  .form-group
+                    label.control-label Yeni Şifre:
+                    input.form-control(type='password')#yenisifre
+                  .form-group
+                    label.control-label Yeni Şifre Tekrar
+                    input.form-control(type='password')#yenisifretekrar
+                  .margin-top-10
+                    button.btn.btn-success.btn.btn-success(type='button',style="display:block;",onclick="sifreDegistir();") Kaydet
+
+    include ./parts/footer
+block js
+  script(src="/static/js/admin/plugins/datatables/jquery.dataTables.js" type="text/javascript")
+  script(src="/static/js/admin/plugins/datatables/dataTables.bootstrap.js" type="text/javascript") 
+  script(src="/static/js/jasny/jasny-bootstrap.js")
+  script(type='text/javascript', src='/static/js/usishi.js')
+  script(type="text/javascript").
+    var session     ='!{user}';
+    var d           =new Date();
+    var yorum_sayisi=0;
+    var mesaj_sayisi=0;
+    var konu_sayisi =0;
+    var usr         ="!{param}";
+       getList(usr);       
+       console.log(session); 
+    if((JSON.parse(session)._id == null)){
+      $('#status').html('').append("Aktif Değil");
+    }else if(JSON.parse(session) ==""){
+      $('#status').html('').append("Aktif Değil");
+    }else{
+      $('#status').html('').append("Aktif ");
+    }
+    var getmonth = d.getMonth()+1;
+    $('#nowdate').html('').append("<b>"+d.getDate()+"<b>/</b>"+getmonth+"<b>/</b>"+d.getFullYear()+"</b>");
+    $(document).ready(function(){
+           alintilar();
+           bildirim();
+          $.dobPicker({
+            daySelector: '#dobday', /* Required */
+            monthSelector: '#dobmonth', /* Required */
+            yearSelector: '#dobyear', /* Required */
+            dayDefault: 'Gün', /* Optional */
+            monthDefault: 'Ay', /* Optional */
+            yearDefault: 'Yıl', /* Optional */
+            minimumAge: 8, /* Optional */
+            maximumAge: 100 /* Optional */
+          });
+    }); 
+    function getList(param){
+        var deger;
+       
+        if(param !=""){
+            deger = param ;
+        }else if(JSON.parse(session)._id !=""){
+            deger =JSON.parse(session)._id;                     
+        }else{
+            window.location="/";
+        }
+        postData('/ajax/findSome',{model:"user",id:deger},function(kayit){       ; 
+                    if(JSON.parse(session)._id == param){
+                      $('.profils').show();                                             
+                      $('#name').val(kayit.name);
+                      $('#surname').val(kayit.surname);
+                      $('#email').html('').append("<b>"+"<font size='4'>"+kayit.email+"</font>"+"</b>");
+                      $('#about').val(kayit.about);
+                        var uye =kayit.role[0].role_name =="caylak" ? "Normal Üye":"";
+                      $('#role').html('').append("<b>"+"<font size='4'>"+Üye+"</font>"+"</b>");
+                      $('#statusabout').html('').append(kayit.about);
+                      $('#date').html('').append("<b>"+"<font size='4'>"+kayit.day +"<b> / </b>"+kayit.month+"<b> / </b>"+kayit.year +"</font>"+"</b>");
+                      $('.profile-usertitle-name').html('').append(kayit.user_name + "<b> ");
+                      $('.profile-usertitle-job').html('').append(kayit.role);
+                       var resim=kayit.picture==""?"<button type='button' onclick='javascript:resim_ekle(\""+kayit._id+"\")' class='btn btn-info btn-sm'><i class='fa fa-x fa-plus-square'></i></button>":"<a href='javascript:resim_ekle(\""+kayit._id+"\")'><img class='resim_buyult' src='/getimg/"+kayit.picture+".jpeg'  style='width:160px;height:160px;'></a>";
+                     if(kayit.picture==""){
+                        $('#erka').attr("src","/static/img/photo.jpeg").attr("onclick","javascript:resim_ekle(\""+kayit._id+"\")");
+                     }
+                     else{
+                         //console.log("'/getimg/"+kayit.picture+".jpeg'");
+                        $('#erka').attr("src","/getimg/"+kayit.picture+".jpeg");
+                     } 
+                     if(JSON.parse(session).password=="")
+                     {
+                        $('#eskisifre').attr('disabled', true);
+                     }           
+                }else if(kayit._id == JSON.parse(session)._id){
+                     $('.profils').show();
+                     $('#name').val(kayit.name);
+                     $('#surname').val(kayit.surname);
+                     $('#email').html('').append("<b>"+"<font size='4'>"+kayit.email+"</font>"+"</b>");
+                     $('#about').val(kayit.about);
+                     var uye =kayit.role[0].role_name =="caylak" ? "Normal Üye":"";
+                     $('#role').html('').append("<b>"+"<font size='4'>"+uye+"</font>"+"</b>");
+                     $('#statusabout').html('').append(kayit.about);
+                     $('#date').html('').append("<b>"+"<font size='4'>"+kayit.day +"<b> / </b>"+kayit.month+"<b> / </b>"+kayit.year +"</font>"+"</b>");
+                     $('.profile-usertitle-name').html('').append(kayit.user_name + "<b> ");
+                     $('.profile-usertitle-job').html('').append(kayit.role);
+                     var resim=kayit.picture==""?"<button type='button' onclick='javascript:resim_ekle(\""+kayit._id+"\")' class='btn btn-info btn-sm'><i class='fa fa-x fa-plus-square'></i></button>":"<a href='javascript:resim_ekle(\""+kayit._id+"\")'><img class='resim_buyult' src='/getimg/"+kayit.picture+".jpeg'  style='width:160px;height:160px;'></a>";
+                       if(kayit.picture==""){
+                          $('#erka').attr("src","/static/img/photo.jpeg").attr("onclick","javascript:resim_ekle(\""+kayit._id+"\")");
+                       }
+                       else{
+                           console.log("'/getimg/"+kayit.picture+".jpeg'");
+                          $('#erka').attr("src","/getimg/"+kayit.picture+".jpeg").attr("onclick","javascript:resim_ekle(\""+kayit._id+"\")");
+                       }
+                     
+                       if(JSON.parse(session).password=="")
+                       {
+                          $('#eskisifre').attr('disabled', true);
+                       }
+                       if(kayit._id == JSON.parse(session)._id){
+                           $('.yenile').attr("onclick","javascript:resim_ekle(\""+kayit._id+"\")").attr("class","glyphicon glyphicon-pencil");
+                       }
+              }else if(kayit._id ==param){
+                      $('.profils').html('');  
+                      $('.profils').hide();                                               
+                      $('#name').val(kayit.name);
+                      $('#surname').val(kayit.surname);
+                      $('#email').html('').append("<b>"+"<font size='4'>"+kayit.email+"</font>"+"</b>");
+                      $('#about').val(kayit.about);
+                      var uye =kayit.role[0].role_name =="caylak" ? "Normal Üye":"";
+                      $('#role').html('').append("<b>"+"<font size='4'>"+uye+"</font>"+"</b>");
+                      $('#statusabout').html('').append(kayit.about);
+                      $('#date').html('').append("<b>"+"<font size='4'>"+kayit.day +"<b> / </b>"+kayit.month+"<b> / </b>"+kayit.year +"</font>"+"</b>");
+                      $('.profile-usertitle-name').html('').append(kayit.user_name + "<b> ");
+                      $('.profile-usertitle-job').html('').append(kayit.role);
+                      var resim=kayit.picture==""?"<button type='button' onclick='javascript:resim_ekle(\""+kayit._id+"\")' class='btn btn-info btn-sm'><i class='fa fa-x fa-plus-square'></i></button>":"<a href='javascript:resim_ekle(\""+kayit._id+"\")'><img class='resim_buyult' src='/getimg/"+kayit.picture+".jpeg'  style='width:160px;height:160px;'></a>";
+                     if(kayit.picture==""){
+                        $('#erka').attr("src","/static/img/photo.jpeg").attr("onclick","javascript:resim_ekle(\""+kayit._id+"\")");
+                     }
+                     else{
+                         //console.log("'/getimg/"+kayit.picture+".jpeg'");
+                        $('#erka').attr("src","/getimg/"+kayit.picture+".jpeg");
+                     }
+                     
+                     if(JSON.parse(session).password=="")
+                     {
+                        $('#eskisifre').attr('disabled', true);
+                     } 
+              }
+        });   
+
+    }
+    function pop_up(id,alan){
+        postData('/ajax/getList',{model_list:["mesaj"]},function(retVal){
+        retVal.mesaj.forEach(function(kayit){
+            if(kayit._id==id){ 
+              $('#genel').modal();
+              $('#genel .modal-title').html('').append(kayit.title);
+              $('#genel .modal-body').html('').append(kayit.mesaj_icerik);
+            }
+          });
+        });        
+     }
+    function kaydet(){
+        var id = JSON.parse(session)._id;
+        var name = getOValue('name');
+        postData('/ajax/update_alan',{id:id,model:"user",alan:"name",yeni_deger:name},function(retVal){
+        });
+        var surname = getOValue('surname');
+        postData('/ajax/update_alan',{id:id,model:"user",alan:"surname",yeni_deger:surname},function(retVal){
+        });
+        var email = getOValue('email');
+        postData('/ajax/update_alan',{id:id,model:"user",alan:"email",yeni_deger:email},function(retVal){
+        });
+        var about = getOValue('about');
+        postData('/ajax/update_alan',{id:id,model:"user",alan:"about",yeni_deger:about},function(retVal){
+        });
+        if(($( "#dobday option:selected" ).text()!="Gün" ) && ($( "#dobmonth option:selected" ).text()!="Ay")&& ($( "#dobyear option:selected" ).text()!="Yıl")){
+          postData('/ajax/update_alan',{id:id,model:"user",alan:"month",yeni_deger:$("#dobmonth option:selected" ).val()},function(retVal){
+          });
+           postData('/ajax/update_alan',{id:id,model:"user",alan:"year",yeni_deger:$("#dobyear option:selected" ).val()},function(retVal){
+          });
+            postData('/ajax/update_alan',{id:id,model:"user",alan:"day",yeni_deger:$("#dobday option:selected" ).val()},function(retVal){
+          });
+        }
+        mesaj_gonder("Tebrikler","Kayıt işleminiz başarıyla gerçekleşti","#ba007c");
+          getList();
+    }
+       function sendMesaj(){
+          var gonderilen = getOValue('kime'); 
+          postData('/ajax/kisibul',{model:'user',user_name:gonderilen},function(retVal){
+            var gonderilenid=retVal._id;
+            var kayit={
+                    title             :getOValue('baslik'),
+                    mesaj             :getOValue('mesaj'),
+                    alıcı             :retVal.user_name,
+                    gonderen          :JSON.parse(session).user_name                    
+            }
+            postData('/ajax/savemesaj',{veri:kayit},function(retVal){
+                
+            });
+         });
+       }
+       function sifreDegistir(){
+          var counter = 0;        
+          if(getOValue('eskisifre') != JSON.parse(session).password){
+              mesaj_gonder("Hata",'eski şifrenizi doğru giriniz..',"#ba007c"); 
+          }
+          else{
+              ++counter;
+          }
+          if(getOValue('yenisifre') == getOValue('yenisifretekrar')){ 
+            ++counter;
+          }  
+          else{
+            mesaj_gonder("Hata",'yeni sifreleri doğru giriniz..',"#ba007c");
+          }
+          if(getOValue('yenisifre').length < 6 || getOValue('yenisifre').length > 100){
+             mesaj_gonder("Hata",'Yeni şifreniz 6 ile 100 karakterden oluşmalıdır',"#ba007c");
+          } 
+          else{ 
+            ++counter;
+          }  
+          if(getOValue('yenisifre').search(/[a-z.]+/)== -1 && getOValue('yenisifre').search(/[A-Z.]+/)== -1){
+             mesaj_gonder("Hata",'Şifreniz en az bir harf içermeli',"#ba007c");
+          }
+          else{
+            ++counter;
+          }
+          if(getOValue('yenisifre').search(/[0-9.]+/)== -1){
+              mesaj_gonder("Hata",'Şifreniz en az bir rakam içermeli',"#ba007c");
+          }
+          else{
+            ++counter;
+          }
+          if(counter==5){
+              var newpassword = getOValue('yenisifre');
+              var id = JSON.parse(session)._id;
+              postData('/ajax/update_alan',{id:id,model:"user",alan:"password",yeni_deger: newpassword},function(retVal){
+                getList();
+              });
+              mesaj_gonder("Tebrikler","Şifre başalı ile değiştirildi","#ba007c");
+              window.location.href="/pg/login";
+          }      
+       }
+       function resim_ekle(id){
+          $('#genel').modal();
+          $('#genel .modal-title').html('').append('<b> PROFİL FOTOGRAFI  </b>');          
+          $('#genel .modal-body').html('').append('<div data-provides="fileinput" class="fileinput fileinput-new">'+
+                                                    '<div id="resim_veri" data-trigger="fileinput" style="width: 550px; height: 350px;" class="fileinput-preview thumbnail"></div>'+
+                                                    '<div><span class="btn btn-default btn-file"><span class="fileinput-new">Resim Seç</span><span class="fileinput-exists">Değiştir</span>'+
+                                                        '<input type="file" name="..."/></span><a href="#" data-dismiss="fileinput" class="btn btn-default fileinput-exists">Kaldır</a></div>'+
+                                                  '</div>');
+          $('#genel .modal-footer').html('').append('<button type="button" class="btn btn-primary btn-sm" onclick="resim_kaydet(\''+id+'\');" data-toggle="modal" data-target="#myModal">KAYDET</button>');
+        }
+        function resim_kaydet(id){
+          postData('/ajax/update_user_resim',{img:$('#resim_veri img').attr('src'),user_id:id},function(retVal){
+            $('#genel').modal("hide");
+            getList();
+          });
+        }
+
+
+
+         

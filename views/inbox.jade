@@ -1,0 +1,302 @@
+extends ./parts/_layout
+block content
+        include ./parts/top
+        br
+        .well.tasarim
+            .row
+                #main-content.page-mailbox
+                    .row
+                        .col-md-5.list-messages
+                            .col-md-12(style="background:#fff; height:40px; border-top:3px solid #333; border-bottom:3px solid #33333f;")                              
+                                .duzlem.pos-rel.message-checkbox
+                                    .ui-checkbox(style="margin-top:5px ! important; font-size:14px; font-weight:bold;")
+                                .duzlem.pos-rel.message-checkbox
+                                    .ui-checkbox(style="margin-top:5px ! important; font-size:14px; font-weight:bold;")
+                                        input#selectall(type="checkbox",style="flat-red") 
+                                        |   Hepsi Seç
+                                .duzlem1.trash(style="margin-top:8px;")
+                            .col-md-12.gelenMesaj.tab(style="background:#fff; height:40px;border-bottom:3px solid #33333f;")
+                                a.duzlem1(href="",style="margin-top: 6px ! important; margin-left: 5px ! important; color:#333; font-size:14px; font-weight:bold; position:relative;") 
+                                    i.fa.fa-envelope-o
+                                    |   Gelen Kutusu 
+                                span.konum.ikon
+                            #messages-list.panel.tabs.panel-default.withScroll.mCustomScrollbar
+                                .mCSB_container.kutu.kutu0(style='position:relative; top:0px;')
+                                    .kutu01
+                            .col-md-12.gidenMesaj.tab(style="background:#fff; height:40px; border-bottom:3px solid #33333f; position:relative;")
+                                a.duzlem1(href="",style="margin-top: 6px ! important; margin-left: 5px ! important; color:#333; font-size:14px;font-weight:bold;") 
+                                    i.fa.fa-envelope-o
+                                    |   Gönderilmiş Kutusu
+                                span.konum.ikon
+                            #messages-list.tabs.panel.panel-default.withScroll.mCustomScrollbar
+                                .mCSB_container.kutu.kutu1(style='position:relative; top:0px;')
+                                    .kutu02
+                           
+                        .col-lg-7.col-md-7.email-hidden-sm.detail-message.goster
+                            .panel.panel-default
+                                .mesajListesi
+                            .panel.panel-default.ekle
+                                
+
+                        .col-lg-7.col-md-7.email-hidden-sm.detail-message.msj
+                            .panel.panel-default(style="margin-left:0 2px")
+                                .mesaj1
+
+        include ./parts/footer
+block js
+    script(type="text/javascript" src="/static/js/scrollbar/jquery.mousewheel.js")
+    script(type="text/javascript" src="/static/js/scrollbar/perfect-scrollbar.js")
+    script.
+        var kontrol,d=[];
+        $(document).ready(function(){
+            var deger   = "!{param}";
+            kontrol     ='!{user}';
+             $('.trash').html("").append(' <a style="margin-left:94px;" href="" onclick="silme(\''+d+'\')"><i class="fa fa-trash-o"><i></a>');
+            $('.kutu0').show();
+            $('.kutu1').hide();
+            $('.kutu2').hide();
+            $('.goster').hide();
+            $('.msj').show()
+            $('.mesaj1').append('<p>Lütfen sol tarafdan mesaj seçiniz</p>')
+            var hiz=500;
+            var $link = $('.tab');
+            var $gstr = $('.tab .kutu');
+            var ikoncuk = $('.tab span');
+            ikoncuk.eq(0).addClass('selected');
+            $gstr.eq(0).addClass('selected');
+            $link.click(function(){
+                $this = $(this);
+                numara = $link.index($this);
+                ikoncuk.removeClass('selected');
+                ikoncuk.eq(numara).addClass('selected');
+               if(numara == 0){
+                    $('.kutu'+numara).show();
+                    $('.kutu'+(numara+1)).hide();
+                    $('.kutu'+(numara+2)).hide();            
+                     return false;
+                }else if(numara ==1){
+                    $('.kutu'+numara).show();
+                    $('.kutu'+(numara-1)).hide();
+                    $('.kutu'+(numara+1)).hide();
+                     return false;
+                }else if(numara==2){
+                    $('.kutu'+numara).show();
+                    $('.kutu'+(numara-2)).hide();
+                    $('.kutu'+(numara-1)).hide()
+                    return false;
+                }         
+            });
+            listesi();
+            gelenMesaj();
+            gidenMesaj();
+            $(function(){
+                $('.kutu01').perfectScrollbar();
+            });
+            $(".kutu01").scrollTop(0);
+            $(".kutu01").perfectScrollbar('update');
+            $(function(){
+                $('.kutu02').perfectScrollbar();
+            });
+            $(".kutu02").scrollTop(0);
+            $(".kutu02").perfectScrollbar('update');
+            $(function(){
+                $('.kutu03').perfectScrollbar();
+            });
+            $(".kutu03").scrollTop(0);
+            $(".kutu03").perfectScrollbar('update');                    
+        });
+        function listesi(){
+                var deger = JSON.parse(kontrol)._id;
+                postData('/ajax/getList',{model_list:["mesaj"]},function(retVal){
+                    retVal.mesaj.forEach(function(kayit){
+                        member(kayit.received[0],function(cb){
+                        var string =kayit.gonderme_tarih;
+                        var  eklem  = string.split(" ");
+                        var     tarih    =eklem[2]+" "+eklem[1]+" "+eklem[3]+" "+eklem[0]+"  "+eklem[4]
+                        if(kayit.received==JSON.parse(kontrol).user_name){ 
+                        $('.kutu01').append('<div class="message-item media" onclick="mesajOkuma(\''+kayit._id+'\');">'+
+                                            '<div class="pull-left text-center">'+
+                                                '<div class="pos-rel message-checkbox"> '+
+                                                    '<div class=" ui-checkbox"><input type="checkbox" style="flat-red" onclick="secili(\''+kayit._id+'\')"></div>'+
+                                                '</div>'+
+                                                '<div>'+
+                                                    '<strong></strong>'+
+                                                '</div>'+
+                                            '</div>'+
+                                            '<div class="message-item-right">'+
+                                                '<div class="media">'+cb+
+                                                    '<div class="media-body">'+
+                                                        '<small class="pull-right">'+tarih+'</small>'+
+                                                        '<h5 class="c-dark"><strong>'+kayit.sender+'</strong></h5>'+
+                                                        '<h4 class="c-dark">'+kayit.title+'</h4>'+
+                                                   ' </div>'+
+                                                '</div>'+
+                                                '<p class="f-14 c-gray"></p>'+
+                                            '</div>'+
+                                        '</div>');
+                        }
+                        });
+                    });
+                });
+        }
+        function gelenMesaj(){
+             var deger = JSON.parse(kontrol)._id;
+                postData('/ajax/getList',{model_list:["mesaj"]},function(retVal){
+                    retVal.mesaj.forEach(function(kayit){
+                        console.log(kayit);
+                        member(kayit.sender,function(cb){
+                        altMesajOku(kayit._id,function(cb1){
+                            alert(cb1);
+                        var string =kayit.gonderme_tarih;
+                        var  eklem  = string.split(" ");
+                        var     tarih    =eklem[2]+" "+eklem[1]+" "+eklem[3]+" "+eklem[0]+"  "+eklem[4]
+                        if(kayit.sender==JSON.parse(kontrol).user_name){ 
+                        $('.kutu02').append('<div class="message-item media" onclick="mesajOkuma(\''+kayit._id+'\');">'+
+                                            '<div class="pull-left text-center">'+
+                                                '<div class="pos-rel message-checkbox">'+
+                                                    '<div class=" ui-checkbox"><input type="checkbox" style="flat-red" onclick="secili(\''+kayit._id+'\')"><a href="" onclick="silme(\''+kayit._id+'\')"><i class="fa fa-trash-o"></i></a></div>'+
+                                                '</div>'+
+                                                '<div>'+
+                                                    '<strong></strong>'+
+                                                '</div>'+
+                                            '</div>'+
+                                            '<div class="message-item-right">'+
+                                                '<div class="media">'+
+                                                 cb+
+                                                    '<div class="media-body">'+
+                                                        '<small class="pull-right">'+tarih+'</small>'+
+                                                        '<h5 class="c-dark"><strong>'+kayit.sender+'</strong></h5>'+
+                                                        '<h4 class="c-dark">'+kayit.title+'</h4>'+
+                                                   ' </div>'+
+                                                '</div>'+
+                                                '<p class="f-14 c-gray"></p>'+
+                                            '</div>'+
+                                        '</div>'+cb1);
+                        }
+                       });
+                      });
+                    });
+                });
+        }
+        function gidenMesaj(){
+            var deger = JSON.parse(kontrol)._id;
+                postData('/ajax/getList',{model_list:["mesaj"]},function(retVal){
+                    retVal.mesaj.forEach(function(kayit){
+                        var string =kayit.gonderme_tarih;
+                        var  eklem  = string.split(" ");
+                        var     tarih    =eklem[2]+" "+eklem[1]+" "+eklem[3]+" "+eklem[0]+"  "+eklem[4]
+                        if(kayit.sender==JSON.parse(kontrol).user_name){ 
+                        $('.kutu03').append('<div class="message-item media">'+
+                                            '<div class="pull-left text-center">'+
+                                                '<div class="pos-rel message-checkbox">'+
+                                                    '<div class=" ui-checkbox"><a style="margin-left:94px;" href="" onclick="silme(\''+kayit._id+'\')"><i class="fa fa-trash-o"><i></a></div>'+
+                                                '</div>'+
+                                                '<div>'+
+                                                    '<strong><a href="../icon/star-o"><i class="fa fa-star-o"></i></a></strong>'+
+                                                '</div>'+
+                                            '</div>'+
+                                            '<div class="message-item-right">'+
+                                                '<div class="media">'+
+                                                    '<div class="media-body">'+
+                                                        '<small class="pull-right">'+tarih+'</small>'+
+                                                        '<h5 class="c-dark"><strong>'+kayit.sender+'</strong></h5>'+
+                                                        '<h4 class="c-dark">'+kayit.title+'</h4>'+
+                                                   ' </div>'+
+                                                '</div>'+
+                                                '<p class="f-14 c-gray"></p>'+
+                                            '</div>'+
+                                        '</div>');
+                        }
+                    });
+                });
+        }
+        function mesajOkuma(param){ 
+           $('.goster').show();  
+           $('.msj').hide();
+           forms(param);
+           postData('/ajax/findSome',{model:'mesaj',id:param},function(retVal){
+           console.log(retVal);
+                    var string =retVal.gonderme_tarih;
+                    var  eklem  = string.split(" ");
+                    var     tarih    =eklem[2]+" "+eklem[1]+" "+eklem[3]+" "+eklem[0]+"  "+eklem[4]
+                        $('.mesajListesi').html("").append('<div class="message-item-right">'+
+                                                        '<div class="media">'+
+                                                     ''+
+                                                    '<div class="media-body">'+
+                                                        '<small class="pull-right">'+tarih+'</small>'+
+                                                    '<h5 class="c-dark"><strong>'+retVal.sender+'</strong></h5>'+
+                                                    '<h4 class="c-dark">'+retVal.title+'</h4>'+
+                                                     '</div>'+
+                                                     '</div>'+
+                                                     '<p class="f-14 c-gray">'+retVal.mesaj_icerik+'</p>'+
+                                                '</div>');               
+           });
+        }
+        function secili(params){
+                d.push(params);
+               $('.trash').html("").append(' <a style="margin-left:94px;" href="" onclick="silme(\''+d+'\')"><i class="fa fa-trash-o"><i></a>');
+        }
+        function silme(deger){
+            console.log(deger);  
+            onay_kutu('&nbsp;  Silme','Silmeyi  Düşünüyor musunuz ?',function(retVal){
+                if(retVal==true){          
+                    postData('/ajax/silme',{model:'mesaj',id:deger},function(cvp){
+                        if(cvp== true){
+                            mesaj_gonder('Okey','Silme işlemi Tamamlandı','#E808F8');                           
+                        }
+                    })
+                }
+            });  
+         
+        }
+        function member(aydi,cb){
+            var t,us=0;
+            postData('/ajax/findSome1',{model:"user",user:aydi},function(kayit){
+                us++;
+                if((kayit.picture !="")){
+                  cb('<img src="/getimg/'+kayit.picture+'.jpeg" width="50" height="60" title=" " alt="" class="pull-left">');
+                }else{
+                  cb('<img src="/static/img/photo.jpeg" width="50" height="60" title=" " alt="" class="pull-left"></a>');
+                }        
+            });           
+        }
+        function alt_messaj(){
+        }
+        function forms(params){
+            $('.ekle').html("").append('<form> <div class="form-group"></div>'+
+                                    '<div style="display:block; margin:5px 10px;" class="form-group">'+ 
+                                     '<textarea id="metin" rows="5" class="form-control"></textarea>'+
+                                '</div>'+
+                                '<div style="margin:6px 35%;" class="form-group">'+
+                                '<button ype="button" class="btn btn-info" onclick="mesaj_cevap(\''+params+'\');">kaydet</button>'+
+                                '</div></form>');
+        }
+        function mesaj_cevap(param){           
+            var veri={
+                        id:param,
+                        mesaj_icerik:getOValue('metin'),
+                    }
+            postData('/ajax/altMesaj',{bilgi:veri},function(cvp){
+                if(cvp == true){
+                    alert("okey");
+                }
+            }); 
+        }
+        function altMesajOku(aydi,cb){
+            var us=0;
+            postData('/ajax/cevapBul',{id:aydi},function(veri){
+                veri.forEach(function(retVal){
+                    us++;
+                  cb('<div class="message-item-right">'+
+                                '<div class="media">'+
+                             ''+
+                            '<div class="media-body">'+
+                                '<small class="pull-right">'+tarih+'</small>'+
+                                '<h5 class="c-dark"><strong>'+retVal.sender+'</strong></h5>'+
+                             '</div>'+
+                             '</div>'+
+                             '<p class="f-14 c-gray">'+retVal.mesaj_icerik+'</p>'+
+                        '</div>');
+                });
+            });
+        }

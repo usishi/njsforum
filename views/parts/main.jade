@@ -1,0 +1,113 @@
+
+div#page-body
+    main(role='main')      
+    .row#forum(style="margin:0 0 ! important;")   
+block js
+    script(type='text/javascript', src='/static/js/usishi.js')
+    script(type="text/javascript").
+      var us_soncocuk=[],kategori,link;
+      $(document).ready(function(){
+          kategoriListe();
+          $('.footable').footable(); 
+      });
+      function kategoriListe(){
+        var eleman=[];
+         postData('/ajax/getList',{model_list:["kategori"]},function(retVal){
+            kategori=retVal.kategori;
+              retVal.kategori.forEach(function(kayit){
+                 if(kayit.parent.id==""){          
+                    $('#forum').append('<div class="panel panel-default"><table class="footable table table-striped table-bordered table-white table-primary table-hover">'+
+                            '<thead><tr>'+
+                            '<th data-class="expand" class="footable-first-column"><i class="fa fa-list-ol"></i>&nbsp;'+kayit.kategori_adi+'&nbsp;&nbsp;</th>'+
+                            '<th class="large80" data-hide="phone"><i class="fa fa-bar-chart-o"></i> Görünüm</th>'+
+                            '<th class="large20 footable-last-column" data-hide="phone"><i class="fa fa-comments-o"></i> Son Mesaj</th>'+
+                            '</tr></thead><tbody id="contents'+kayit._id+'"></tbody></table></div>');
+                    if(kayit.children.length > 0){
+                      kayit.children.forEach(function(cocuk){
+                        sonYorum(cocuk.id,function(cb){
+                            hit_child(cocuk.id,function(cb2){ 
+                                toplamMesaj(cocuk.id,function(cb3){ 
+                                 $('#contents'+kayit._id).append('<tr>'+
+                                      '<td title="" class="expand footable-first-column"><span class="footable-toggle"></span>'+
+                                        '<i class="row-icon-font icon-moon-default  text-muted" title=""></i>'+
+                                        '<i class="row-icon-font-mini " title=""></i>'+
+                                         '<a class="feed-icon-forum hidden-xs hidden-sm" title="" href="" data-original-title=" "><i class="fa fa-rss rss-color-forum"></i></a>'+
+                                         '<a href="/pg/konu/'+cocuk.id+'">'+cocuk.name+'</a><br>'+
+                                         '<span>'+cocuk_ver(cocuk.id)+'</span> '+
+                                      '</td>'+
+                                      '<td class="center">'+cb2+' &nbsp;Konu <br>'+cb3+'&nbsp; Yorum</td>'+
+                                      '<td class="center footable-last-column ">'+cb+'</td>'+
+                                   ' </tr><tr class="footable-row-detail" style="display: none;"><td class="footable-row-detail-cell" colspan="1"><div class="footable-row-detail-inner"><div class="footable-row-detail-row"><div class="footable-row-detail-name">Statistics:</div><div class="footable-row-detail-value">9 Topics <br>16 Posts</div></div><div class="footable-row-detail-row"><div class="footable-row-detail-name">Last post:</div><div class="footable-row-detail-value"><i class="fa fa-user"></i> by <a href="./memberlist.php?mode=viewprofile&amp;u=2" style="color: #AA0000;" class="username-coloured" data-original-title="" title="">SiteSplat</a>        <a rel="tooltip" data-original-title="View the latest post" href="./viewtopic.php?f=2&amp;p=67#p67"><i class="mobile-post fa fa-sign-out"></i></a><br><i class="fa fa-clock-o"></i><small> Today, 17:34</small></div></div></div></td></tr>');
+                                });
+                            });
+                        });
+                      });
+                    }
+                  }             
+              });
+          });
+      }
+      function cocuk_ver(id){
+        var us="<b style='font-size:11px;'>Alt Bölümler: </b>",sayac=0;
+        kategori.forEach(function(kayit){
+          if(kayit._id==id){
+            kayit.children.forEach(function(cocuk){
+              sayac++;
+              //console.log(cocuk);
+              us=us+"<a style='text-decoration:underline;font-size:11px;' href='/pg/konu/"+cocuk.id+"'>"+cocuk.name+"</a>&nbsp;&nbsp;";
+            });
+          }
+        });
+        return us;
+      }      
+      function sonYorum(id,cb){
+          var sayac=0,eleman=[],us;
+          kategori.forEach(function(kayit){
+            if(kayit._id==id){
+              kayit.children.forEach(function(cocuk){
+                sayac++;
+                   eleman.push(cocuk.id);                     
+              });
+            }
+          });
+          postData('/ajax/sonYorum',{model:'yorum',bilgi:'anasayfa',id:eleman},function(cvp){
+              if(cvp.length >0 ) {             
+                cvp.forEach(function(veri){ 
+                     var date =veri.ekleme_zamani.split("/");
+                    us='<i class="fa fa-user"></i>&nbsp;<a href="/pg/profil/'+veri.ekleyen.id+'" data-original-title="" title="">'+veri.ekleyen.name+'</a>&nbsp;<a rel="tooltip" data-placement="right" data-original-title=" " href="#"><i class="mobile-post fa fa-sign-out"></i></a> <br><i class="fa fa-clock-o"></i> <small>'+date[1]+'.'+date[0]+'.'+date[2]+'</small>';
+                    cb(us);                                               
+                  })
+              }else{                    
+                  cb("Yorum Yok");
+              }                  
+          });             
+      }
+      function hit_child(id,cb){
+          var sayac=0,diziler=[];
+          kategori.forEach(function(kayit){
+            if(kayit._id==id){
+                kayit.children.forEach(function(cocuk){
+                  sayac++;
+                  diziler.push(cocuk.id);                
+                });
+            }
+          });
+          postData('/ajax/sayac',{id:diziler},function(veri){
+                     cb(veri)
+          });
+      }
+      function toplamMesaj(id,cb){
+          var sayac=0,eleman=[];
+          kategori.forEach(function(kayit){
+            if(kayit._id==id){
+                kayit.children.forEach(function(cocuk){
+                  sayac++;
+                  eleman.push(cocuk.id);                
+                });
+            }
+          });
+          postData('/ajax/totalYorum',{id:eleman},function(veri){
+            cb(veri);
+          });
+      }
+      

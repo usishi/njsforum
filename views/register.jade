@@ -1,0 +1,375 @@
+extends ./parts/_layout
+block content
+    include ./parts/top
+    section.subheader
+      .clearfix
+        .fxicon
+          i.fa.fa-cogs
+        ul.index-pos.pull-left
+          li.index-title
+            h1 Üye Kayit Formu
+          li.index-sub Üye  Kayit  Formu
+         .search-box.pull-right
+              form
+                    fieldset
+                      input#arama( type='text1', maxlength='128',onkeydown="return kd(event)", title='Arama', placeholder='Arama', value='')              
+    br
+    .well(style="background:#fff;")
+      .side-segment
+        h3 Yeni Kayit Formu
+      fieldset
+        .form-group
+          .row
+              .col-xs-6
+                  label.control-label(for='username') Kullanıcı Adı:
+                  .input-icon.left
+                    i.fa.fa-user
+                    input.form-control.input-sm(type='text', name='username', size='25', value='', title='Username', placeholder='Kullanıcı Adı')#kadi
+              .col-xs-6
+                  label.control-label(for='username')  Adınız:
+                  .input-icon.left
+                    i.fa.fa-user
+                    input.form-control.input-sm(type='text', name='username', size='25', value='', title='Username', placeholder='Adınız')#adi
+            .control-group
+          .row
+              .col-xs-6
+                  label.control-label(for='username')  Soyadınız:
+                  .input-icon.left
+                    i.fa.fa-user
+                    input.form-control.input-sm(type='text', name='username', size='25', value='', title='Username', placeholder='soyadınız')#soyadi
+              .col-xs-6
+                  label.control-label(for='email') E-mail :
+                  .input-icon.left
+                    i.icon-moon-at
+                    input.form-control.input-sm(type='text', name='email', size='25', maxlength='100', value='', placeholder='Eposta')#eposta
+            .control-group
+          .row
+               .col-xs-6
+                    label.control-label(for='new_password') Şifre:
+                    .input-icon.left
+                      i.fa.fa-key
+                      input.form-control.input-sm(type='password', name='new_password', size='25', value='', placeholder='Şifre')#sifre
+                .col-xs-6
+                    label.control-label(for='password_confirm') Tekrar şifre:
+                    .input-icon.left
+                      i.fa.fa-key
+                      input.form-control.input-sm(type='password', name='password_confirm', size='25', value='', placeholder='Tekrar Şifre')#tsifre
+              .control-group
+          .form-group
+            .row
+              .col-xs-4
+                select.form-control#cinsiyet
+                  option Cinsyetinizi Seçiniz
+                  option Erkek
+                  option Kadın
+          .form-group     
+            .erka
+          .row
+               label.control-label(for='username') Doğum Tarihi:
+              .row
+                .col-xs-3
+                    select#dobday.form-control.input-lg
+                .col-xs-3
+                    select#dobmonth.form-control.input-lg 
+                .col-xs-3
+                   select#dobyear.form-control.input-lg
+                
+            .control-group(style="margin-bottom:6px;")
+          .row
+                .col-xs-3
+                  a.form-control.btn.btn-primary(style="color:#fff ! important; line-height:24px; width:150px;! important;",type='button',data-toggle='modal', data-target='#myModal')
+                   | Forum Anlaşması
+                .col-xs-10
+                  input(type='checkbox',name="checkbox", checked="" ,value="1",style="display:inline-block;text-align:center;line-height:20px;vertical-align:middle;")#belgeler  
+                  |  Okudum,kabul ediyorum.
+            .control-group(style="margin-bottom:8px;")
+          .row
+              fieldset
+                button.btn.btn-block.btn-success.btn.btn-success(type='button',style="display:block;",onclick="kaydet();") Kaydet
+            #myModal.modal.fade.bs-example-modal-lg(tabindex='-1', role='dialog', aria-labelledby='myLargeModalLabel', aria-hidden='true')
+              .modal-dialog.modal-lg
+                .modal-content
+                    div(style="padding:15px 15px;")
+                        p
+                          | Bu forumların yöneticileri ve moderatörleri her ne kadar, her türlü uygunsuz ve itiraz edilebilecek içerik ve materyali olabildiğince kısa sürede forumdan silecek olsalar da, bütün mesajların incelenmesi mümkün olamayabilmektedir. Forumlara gönderilen her mesaj, onu gönderenin görüşlerini yansıtmakta ve yazarının sorumluluğu altında olup, kendilerine ait mesajlar dışında moderatörler, adminler ya da webmasterlar kullanıcı mesajlarının içeriğinden dolayı sorumlu tutulamazlar. 
+                        p
+                          | Forumlarımızda, aşağılayıcı, alaycı, başkalarını küçümseyen, adminlere veya kullanıcılara saygısızlık içeren, müstehcen, kaba, iftira niteliğinde, nefret dolu, tehdit edici, huzursuzluk çıkartmaya yönelik, başka kullanıcıların kimliğini açıklayıcı, adult içerik, kopya yazılım, warez, crack, nocd, şifre kırma, hack ve hile kullanımıyla ilgili, Türkiye Cumhuriyeti yasalarına, uluslararası kanun, tüzük veya anlaşmalara, ülkemiz çıkarlarına, kişilik haklarına veya genel toplum ahlak kurallarına aykırı, din, dil, ırk, cinsiyet ve benzeri ayrımcılıkları destekleyen konular açmak ve içerikler göndermek, linkler vermek ve tartışmaları amacının dışına ve diğer kullanıcıları rahatsız edecek boyutlara taşımak yasaktır.  Her mesajın IP adresi ve giriş tarihi gerektiğinde yetkili makamlara verilmek üzere kaydedilmektedir. Kullanıcılar, bu forumun moderatörlerinin, adminlerinin veya webmasterının, kendi iradeleri doğrultusunda herhangi bir başlığı silme, taşıma, kilitleme yetkisi olduğunu kabul etmektedirler. Kullanıcılar, girdikleri her bilginin veritabanında saklanacağını kabul etmektedirler. Her ne kadar bu bilgiler, 3. şahıslara verilmeyecek olsalar da, herhangi bir 'hack' olayı sonucunda bu bilgilerin 3. şahısların eline geçmesi halinde, webmaster, moderatör ya da adminler sorumlu tutulamazlar. 
+                        p
+                          | Forumumuz orijinal yazılım kullanımını desteklemekte ve önermektedir. Gerek site yapısında, gerek ise birlikte çalışılan sunucuda lisanslı işletim sistemleri, yazılımlar kullanılmaktadır. Kullanıcılarımıza da, sevdikleri yazılımların orijinalini almalarını ve kullanmalarını tavsiye ediyoruz. 
+                        p
+                          | Forumdaki mesajlarınız yöneticiler tarafından gerektiğinde silinebilir, taşınabilir ya da cevap yazılamaz hale getirilebilir. Bu yöneticilerimizin forumun düzenini sağlamak için uyguladığı yöntemlerden birisidir. Yanlış bir nedenle bu uygulamalarla karşılaştığınızı düşünüyorsanız http://forum.donanimhaber.com/support.asp adresinden yöneticilere ulaşabilir ve konunuzun ya da mesajınızın neden silindiğini öğrenmek için destek formu oluşturabilirsiniz. 
+                        p
+                          | Takma isimler : Kullanıcılarımızdan, forumumuza üye olurken genel kabul gören ahlaki değerlere uygun olan bir takma ad almalarını rica ederiz. Aksi fark edildiği durumda kullanıcıya haber verilmeksizin kullanıcı adları ve hesapları silinebilir. Alınan takma adlardan dolayı sitemiz bir sorumluluk kabul etmemekte sorumluluk kayıt olan kişiye aittir.
+                        p
+                          | Forum kirliliği : Forumları kullanırken konuları, ait oldukları başlıklar altına açmanızı rica ederiz. Gereksiz başlıklar açmamaya, aynı veya benzer bir konuda daha önce başka bir başlık açılıp açılmadığını 'Arama'  fonksiyonunu kullanarak kontrol ettikten sonra başlığı açmaya, gereksiz ve flooding niteliği taşıyabilecek sıklıkta mesaj atmamaya özen gösteriniz.İç içe alıntılar yaparak forum düzenini bozmamaya özen gösteriniz. Eski tarihli konulara eğer ki mesajınız konuyla ilgiliyse mesaj atabilirsiniz. Konuyla alakasız mesaj atarak konuyu güncellemek yasaktır.
+                        p
+                          | Bu forum sistemi, bazı bilgileri bilgisayarınızda saklamak için cookie'leri kullanmaktadır. Girdiğiniz özel bilgilerin hiçbiri bu cookie'lerde bulunmamaktadır, bunların tek amacı forumda daha rahat bir gezinti yapabilmenizdir. Geçerli e-mail adresiniz sadece kaydınızı onaylamak, şifrenizi yollamak ve unuttuğunuzda şifrenizi size hatırlatabilmek için istenmektedir. 
+                        p
+                          |  Forumumuzun ikinci el kısmında 24 saat içersinde iki konu açmak yasaktır. Bu forum kullanıcılarına daha dağılımlı bir satış hakkı tanımak için alınmış bir karardır. Eğer ki yapılan kural ihlali moderatörler tarafından görülürse konu silinecektir. İkinci bir nick ile açan kişilerinde nickleri kitlenecektir. Tavsiyemiz satış ilanlarınızı bir araya toplamanızdır. 
+                        p
+                          | Forumda Dini ve Siyasi konuların geçtiği mesaj atımları yasaktır bu tür içeriklerin tartışılması yıllar süren deneyim sonrasında bir noktaya ulaşamadığı görülmüş ve gerginlik yaratması yüzünden bu konuların  tartışılması yasaktır. Eğer ki yapılan kural ihlali moderatörler tarafından görülürse konu silinecektir. 
+                        p
+                          | İmza kurallarımız konu dışında üst konu olarak aktarılmıştır. İmza sınırlamaları diğer kullanıcıların foruma katılımlarını arttıracak yönde ayarlanmıştır bu yüzden kısıtlamalar aslında sizin daha yüksek forum deneyimi yaşamanızı sağlayacaktır.
+                        p
+                          | Forumumuzdaki ikinci el, alış ve satış kısımları vardır. Yalnız forum yönetiminin ve şirketinin kullanıcılar arasındaki birbirleri ile olan ilişkilerinde sorumluluğu yoktur. Dolayısıyla diğer kullanıcılarla iş ilişkisinde bulunmak ve mal alıp satmanın riski tamamen her kullanıcının kendisine ait aldığı bir risktir.
+                        p
+                          | Forum yöneticileri ve alt yapısı yazdığınız her mesajı sonsuza kadar saklamak zorunda değildir. Alt yapı sorunları ve başka sorunlar nedeniyle mesajlar silinebilir yada kaybolabilir. Kullanıcını başvururken bunları kabul etmiş sayılır. 
+                        p
+                          | Forumda açıklayacağınız kişisel bilgilerinizin diğer forum kullanıcıları tarafından kötüye kullanılabileceğini bilmeniz gerekmekte ve ona göre dikkatli davranmanız gerekmektedir. Bu gibi davranışlardan dolayı forumumuz sorumlu tutulamaz tüm sorumluluk konuyla ilgili üyelerdedir. 
+                        p
+                          | Forumumuzdaki hak kısıtlamaları yöneticiler tarafından değiştirilebilmektedir   bu yüzden bu yönde maddeler ilerde bu anlaşmaya eklenebilir ve kullanıcı bu maddeleri kabul etmiş sayılır.
+                        p
+                          | Sitedeki tüm harici linkler ayrı bir sayfada açılır. Sitemiz harici linklerin sorumluluğunu almaz. Linklerin verilme sorumluluğu ilgili üyeye aittir. 
+                        p
+                          | Sitemizde firmalar ile ilgili yaşadığınız sorunlar, problemler hiç bir nedenle forum sayfalarında dile getirilemez. Sitemiz bu tür şikayetlerin bulunacağı, hakkın aranacağı bir kurum değildir. Lütfen ilgili kurumlara başvurunuz. Bu tür mesajlar silinebilir, kitlenebilir uyarıyı göz ardı eden üye uzaklaştırılabilir.
+                        p
+                          | Forumlarda iki farklı takma ad ve/veya hesap sahibi olmanız yasaktır. Tek bir hesap ile girmeniz, dolaşmanız ve mesaj atmanıza izin verilmektedir. Bunun dışında birden fazla üyeliği bulunan kişilerin hesapları kapatılabilir. Size ait hesabınıza herhangi bir ceza verilmişse, ceza süreniz boyunca başka bir hesapla foruma giriş yapmanız yasaktır ve fark edildiği anda asıl hesabınıza ek 7 günlük uzaklaştırma cezası verilmektedir.
+                        p
+                          |  Forumumuza attığınız mesajların , üyelik iptali, cezalandırma veya uzaklaştırma gibi durumlarda silinip silinmeyeceğine kullanıcı değil yöneticiler karar verir. Kısaca hangi mesajların silinip hangilerinin silinmeyeceğine karar vermek kullanıcıya ait bir hak değildir, tüm konu veya mesajlar gerektiğinde foruma mal edilmiş sayılabilir ve veritabanında ister anonim ister gerçek isimli olacak şekilde tutulabilir. Lütfen mesajlarınızı buna göre foruma gönderiniz. Aksi takdirde forum ve yöneticiler sorumluluk kabul etmez anlaşmayı kabul ettiğinizi varsayarlar. 
+                        p
+                          | Sitemize kayıt olmak için GSM Telefon numarası onayını geçmeniz gerekmektedir. Bu sistem gerçek bir kişi olduğunuzu ve sahte üyelik sahibi olmadığınızı kanıtlamak için getirilmiştir. Onaylamak için ve sonrası için hiç bir ücret alınmayacaktır. 
+                        p
+                          | GSM numaranız üyeliğiniz devam ettiği sürece veya uzaklaştırılsanız bile saklı kalacaktır. Gerektiğinde süre gelen mahkemelerin istekleri doğrultusunda telefon numaranızda istediğinde yasal güçlere verilecektir. Bunun dışında üçüncü şahıs ve tüzel kişilikler, Donanım Haber çalışanlarından seçilmişler hariç olmak üzere sizden başka kimse erişmeyecektir. 
+                        p
+                          | Donanım Haber GSM numaranızın güvenliğini sağlamakla yükümlüdür ve bunun için tüm imkanları kullanır. Ancak bilişim suçlarına maruz kalma durumunda güvenliğini garanti edemez.
+                        p
+                          | Donanım Haber telefon numarınıza profilinizde bulunan isteğe bağlı seçeneği seçtiğiniz durumda bilgisayar dünyasından son fırsatları bilgilendirici sms'ler atabilir. Eğer bu mesajları almak istemezseniz her zaman profilinizden değişiklik yapabilirsiniz.
+                        p
+                          | Forumda rahatsızlık verme ihtimali bulunan ya da ceza vermek üzere araştırma yapılan kişilerin özel mesajları her zaman adminler tarafından haber vermeksizin okunabilmektedir.
+                        p
+                          | Bilgilerinize sunduğumuz bu kurallarımızı dikkate alacağınızdan eminiz. Sizlerin ilgisiyle günden güne gelişecek olan portalımızın, alışkanlıklarınız arasına severek kattığınız günlük uğrak yeriniz olacağını umuyoruz. Sevgilerimizle
+
+                
+
+      
+    include ./parts/footer
+block js 
+    script(type='text/javascript', src='/static/js/usishi.js')
+    script(type="text/javascript").
+     $(document).ready(function(){
+        $.dobPicker({
+          daySelector: '#dobday', /* Required */
+          monthSelector: '#dobmonth', /* Required */
+          yearSelector: '#dobyear', /* Required */
+          dayDefault: 'Gün', /* Optional */
+          monthDefault: 'Ay', /* Optional */
+          yearDefault: 'Yıl', /* Optional */
+          minimumAge: 8, /* Optional */
+          maximumAge: 100 /* Optional */
+        });
+      });    
+      console.log('!{captcha}');
+      //$('.erka').append('!{captcha}'); 
+      function belge(){
+            $('#genel').modal();
+            $('#genel .modal-title' ).html('').append('Usishi  Bilişim Formu');
+            $('#genel .modal-body'  ).html('').append( 'and can be downloaded from You agree not to post any abusive, obscene, vulgar, slanderous, hateful, threatening, sexually-orientated or any other material that may violate any laws be it of your country, the country where “SiteSplat.com” is hosted or International Law. Doing so may lead to you being immediately and permanently banned, with notification of your Internet Service Provider if deemed required by us. The IP address of all posts are recorded to aid in enforcing these conditions. You agree that “SiteSplat.com” have the right to remove, edit, move or close any topic at any time should we see fit. As a user you agree to any information you have entered to being stored in a database. While this information will not be disclosed to any third party without your consent, neither “SiteSplat.com” nor phpBB shall be held responsible for any hacking attempt that may lead to the data being compromised.'+
+             '');
+      }
+      function kaydet(){
+        var email=getOValue('eposta');
+        var sifre1=getOValue('sifre');
+        var tsifre1=getOValue('tsifre');
+        var counter = 0;       
+         var kayit={
+                    kullanici_adi     :getOValue('kadi'),
+                    adi               :getOValue('adi'),
+                    soyadi            :getOValue('soyadi'),
+                    email             :getOValue('eposta'),
+                    sifre             :getOValue('sifre'),
+                    ay                :$("#dobmonth option:selected" ).val(),
+                    gun               :$("#dobday option:selected" ).val(),
+                    yıl               :$("#dobyear option:selected" ).val(),
+                    cinsiyet          :$("#cinsiyet option:selected" ).val()
+          }
+            /******************/
+          if((getOValue('kadi')!=""))
+            {
+                ++counter;
+                if(getOValue('kadi').length > 2)
+                  {
+                      ++counter;
+                      if(getOValue('adi')!=""){
+                         ++counter;
+                            if(getOValue('adi').length > 1){
+                                ++counter;
+                                if(getOValue('soyadi') !=""){
+                                    ++counter;
+                                      if(getOValue('soyadi').length >1){
+                                          ++counter;
+                                          if(isValidEmailAddress(email)==true){
+                                              ++counter;
+                                              if(isValidPassword(sifre1)==true){
+                                                 ++counter;
+                                                  if(isValidPassword(tsifre1)==true){
+                                                     ++counter;
+                                                     if(sifre1 ==tsifre1){
+                                                        ++counter;
+                                                          if($( "#cinsiyet option:selected" ).text()!="Cinsyetinizi Seçiniz")
+                                                          {
+                                                              ++counter;
+                                                             if($('#belgeler:checked').val() !="")
+                                                             {
+                                                                 ++counter;
+                                                                 if($( "#dobday option:selected" ).text()!="Gün")
+                                                                  {
+                                                                      ++counter;
+                                                                      if($( "#dobmonth option:selected" ).text()!="Ay")
+                                                                      {
+                                                                           ++counter;
+                                                                        if($( "#dobyear option:selected" ).text()!="Yıl")
+                                                                            {
+                                                                                ++counter;
+                                                                                postData('/ajax/control',{model:'user',user_name:getOValue('kadi')},function(retVal){
+                                                                                    if(retVal.status == true){
+                                                                                      uyari("Bu kullanıcı adı bulunmakta lütfen başka kullanıcı adı kullanınınız..");
+                                                                                    }else{
+                                                                                      ++counter;
+                                                                                           postData('/ajax/saveuser',{veri:kayit},function(retVal){
+                                                                                                 });
+                                                                                                 window.location.href="/pg/login"
+                                                                                      
+                                                                                        /*if(counter == 16){
+                                                                                            postData('/',{captcha:$('#cap').val()},function(retVal){
+                                                                                              if(retVal != true){
+                                                                                                 uyari('Lütfen doğru karakterleri giriniz.');
+                                                                                              }else{
+                                                                                                 postData('/ajax/saveuser',{veri:kayit},function(retVal){
+                                                                                                 });
+                                                                                                 window.location.href="/pg/login"
+                                                                                              }
+                                                                                            }); 
+                                                                                        }
+                                                                                        else{
+                                                                                          console.log(counter);
+                                                                                          uyari('Lütfen guvenlik  kodunu Doğru giriniz..');
+                                                                                        }*/
+                                                                                    } 
+
+                                                                                });  
+                                                                             
+                                                                            }else{
+                                                                              uyari("doğum tarihinizin yılını giriniz..");
+                                                                            } 
+                                                                        }else{
+                                                                            uyari("doğum tarihinizin ayını giriniz..");
+                                                                        }
+                                                                  }else{
+                                                                      uyari("doğum tarihinizin gününü giriniz..");
+
+                                                                    } 
+                                                              }else{
+                                                                uyari('Lütfen Anlaşmayı Seçiniz');
+                                                              }
+                                                          }else{
+                                                              uyari('Lütfen Cinsiyet Seçiniz.');
+                                                          }
+                                                      }else{
+                                                        uyari('Lütfen Şifreleriniz Uyuşmuyor.Tekrar Deneyiniz.'); 
+                                                      }
+                                                  }
+                                              }
+                                            }else{
+                                              uyari('Lütfen email giriniz.'); 
+                                            }
+                                        }else{
+                                           uyari('Lütfen  soyadinız en az 2 karakterde oluşmalıdır.');
+                                        }
+                                  }else{
+                                      uyari('Lütfen  soyadinız giriniz.');
+                                  }                              
+                              }else{
+                                uyari('Lütfen  adinız en az 2 karakterde oluşmalıdır.');
+                              }
+                        }else{
+                          uyari('Lütfen  adinızı giriniz.');
+                        }
+                  }else{
+                     uyari('Lütfen Kullanıcı adi en az 2 karakterde oluşmalıdır.');
+                  } 
+            }else{
+                uyari('Lütfen Kullanıcı adi giriniz.');
+            }            
+      }
+      function kd(e)
+      {
+            var intKey = (window.Event) ? e.which : e.keyCode;
+            if (intKey == 13) { 
+                var deger=document.getElementById("arama").value;
+                 arama(deger);              
+                return false;
+            }
+            return true;
+      }  
+      function arama(params){
+          if(params.length > 2){
+            window.location ="/pg/search/"+params;
+          }else{
+            mesaj_gonder('Arama','Lütfen Arama kısmına en az üç harfli kelime girin.','#660000')
+          }
+      }
+      function isValidEmailAddress(emailAddress) {
+           var pattern = new RegExp(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
+           return pattern.test(emailAddress);
+  
+      }     
+
+      function isValidPassword(password){  
+        if(password !=""){
+  
+            if(password.length > 6 || password.length < 100){
+ 
+                if(password.search(/[a-z.]+/) != -1 || password.search(/[A-Z.]+/) != -1){
+  
+                      if(password.search(/[0-9.]+/) != -1){
+  
+                         return true;
+  
+                    }else{
+ 
+                       uyari('Şifreniz en az bir rakam içermeli');
+  
+                    }
+
+ 
+                 }else{
+                     uyari('Şifreniz en az bir harf içermeli');
+ 
+                   }
+  
+            }else{
+  
+               uyari('Şifreniz 6 ile 100 karakterden oluşmalıdır');
+            }
+        }
+      }
+      function uyari(params){ 
+   
+  
+           $.smallBox({
+  
+                  position:1,
+  
+                  title: "Hata !!",
+  
+                  content: params,
+  
+                  icon: "/static/js/alert/static/img/invite-50.png",
+  
+                  color: "#ba007c",
+  
+                  timeout: 5000
+  
+            });
+  
+         
+  
+        $('#sifre').length
+  
+      }
+
+  
+
+     
+
+     

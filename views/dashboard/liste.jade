@@ -1,0 +1,124 @@
+extends _layout1
+block pagecontent
+    body.skin-blue
+      include ./parts/top
+      div.wrapper.row-offcanvas.row-offcanvas-left
+            include ./parts/menu
+            aside.right-side
+              section.content-header
+                h1   Lİste
+                  small               
+                ol.breadcrumb
+                  li
+                    a(href='#')
+                      i.fa.fa-dashboard
+                      |  içerik
+                  |                         
+                  li.active liste
+              section.content
+                .row
+                  .col-xs-8
+                     .box
+                        .box-header
+                            h3.box-title İçerik Listesi
+          
+                          .box-body
+                            form(role='form')
+                                .form-group
+                                label Ders  Seçiniz                                        
+                                select.form-control#dersler1
+                            br
+                            table.table.table-bordered
+                              thead
+                                tr
+                                  th(style='width: 10px') #                                                                                         
+                                  th  Hafta                                      
+                                  th  Pazartesi
+                                  th  Salı
+                                  th  Çarşamba
+                                  th  Perşembe
+                                  th  Cuma
+                                  th  Cumertesi
+                                  th  Pazar   
+                                  td  Durum
+                              tbody#dersListe 
+                                
+                  .col-xs-4
+                     .box#hepsi
+                        .box-header
+                            h3.box-title Haftalık İçerik Listesi
+          
+                          .box-body                                    
+                            h1.ders_adi
+                            br
+                            table.table.table-bordered
+                              thead
+                                tr                                                                                      
+                                  th(colspan="2").kacinci 
+
+                              tbody#dersListe1
+                                
+
+                                  
+
+                      
+  block scripts
+      script(src='//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')      
+      script(src='//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js', type='text/javascript')
+      script(src='/static/js/plugins/datatables/jquery.dataTables.js', type='text/javascript')     
+      script(src='/static/js/plugins/datatables/dataTables.bootstrap.js', type='text/javascript')
+      script(src='/static/js/AdminLTE/app.js', type='text/javascript')
+      script(src='/static/js/AdminLTE/demo.js', type='text/javascript')
+      script(type="text/javascript",src="/static/js/forpages/kayit.js")
+      script(type='text/javascript').
+        $(document).ready(function(){
+            dersler();
+            $('#hepsi').hide();
+           $( "#dersler1" ).change(function() {
+                    seciliDersListesi( $( "select#dersler1 option:selected").val() );
+           
+            });
+        });
+        function dersler(){
+            var us=0;
+            $('#dersler1').html('');
+            postData('/ajax/derslerListesi',{model:'dersler'},function(kayit){
+              kayit.forEach(function(sonuc){
+                us++;
+                $('#dersler1').append('<option value='+sonuc._id+'>'+sonuc.ders_adi+'</option>');
+              })
+            });
+        }
+        function hepsiGoster(hafta,dersID){
+         
+          $('#hepsi').show();
+          $('.ders_adi').html('');
+          $('.kacinci').html('');
+          $('#dersListe1').html('');
+          postData('/ajax/bul1',{dersID:dersID,model:'dersler'},function(kayit){
+            postData('/ajax/seciliDersler',{dersID:dersID,seciliHafta:hafta},function(retVal){
+              retVal.forEach(function(sonuc2){
+                      var     etiket1 = sonuc2.gunler == "pazartesi" ? sonuc2.icerik : 'İçerik Yok' ;
+                      var     etiket2 = sonuc2.gunler == "salı" ? sonuc2.icerik: 'İçerik Yok' ;
+                      var     etiket3 = sonuc2.gunler == "çarşamba" ?sonuc2.icerik : 'İçerik Yok' ;
+                      var     etiket4 = sonuc2.gunler == "Perşembe" ? sonuc2.icerik : 'İçerik Yok' ;
+                      var     etiket5 = sonuc2.gunler == "cuma" ? sonuc2.icerik : 'İçerik Yok' ;
+                      var   etiket6 = sonuc2.gunler == "cumertesi" ? sonuc2.icerik : 'İçerik Yok' ;
+                      var   etiket7 = sonuc2.gunler == "pazar" ? sonuc2.icerik : 'İçerik Yok' ;
+                $('.kacinci').append(hafta);
+                $('.ders_adi').append(kayit.ders_adi);
+                 $('#dersListe1' ).append('<tr><td style="width:20%;">Pazartesi</td><td>'+etiket1+'</td></tr>'+
+                                          '<tr><td style="width:20%;">Salı</td><td>'+etiket2+'</td></tr>'+
+                                          '<tr><td style="width:20%;">Çarşamba</td><td>'+etiket3+'</td></tr>'+
+                                          '<td style="width:20%;">Perşembe</td><td>'+etiket4+'</td></tr>'+
+                                          '<tr><td style="width:20%;">Cuma</td><td>'+etiket5+'</td></tr>'+
+                                          '<tr><td style="width:20%;">Cumertesi</td><td>'+etiket6+'</td></tr>'+
+                                          '<tr><td style="width:20%;">Pazar</td><td>'+etiket7+'</td></tr>');                                       
+
+                });
+            });
+          })
+        }
+
+
+        

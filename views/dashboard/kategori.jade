@@ -1,0 +1,192 @@
+extends _layout1
+block pagecontent
+    body.skin-blue
+      include ./parts/top
+      div.wrapper.row-offcanvas.row-offcanvas-left
+            include ./parts/menu
+            aside.right-side
+              section.content-header
+                h1  Yeni Kategori 
+                  small            
+                ol.breadcrumb
+                  li
+                    a(href='#')
+                      i.fa.fa-dashboard
+                      |  Haftalık
+                  |                         
+                  li.active İçerik Ekle
+              section.content
+                .row
+                  .col-md-6
+                    #loading-example.box.box-danger
+                      .box-header
+                        br
+                        .row
+                          .col-md-12
+                            // Custom Tabs
+                            .nav-tabs-custom
+                              ul.nav.nav-tabs
+                                li.active
+                                  a(href='#tab_1', data-toggle='tab', class="tabs",id="1") KAtegori 
+                                li
+                                  a(href='#tab_2', data-toggle='tab', class="tabs",id="2") Alt Kategori
+                              .tab-content
+                                #tab_1.tab-pane.active
+                                  input#kategori_adi.form-control(type='text', placeholder='Kategori Adı Giriniz')
+                                #tab_2.tab-pane
+                                  .form-group
+                                    label Kategori Seçiniz
+                                    select.form-control#kat_secim
+                                      option option 1
+                                      option option 2
+                                      option option 3
+                                      option option 4
+                                      option option 5
+                                  input#alt_kategori.form-control(type='text', placeholder='Alt Kategori Adı Giriniz')
+
+                      .box-footer
+                        .row
+                          .col-xs-4.text-center(style='border-right: 1px solid #f4f4f4')
+                           
+                          .col-xs-4.text-center(style='border-right: 1px solid #f4f4f4')
+                       
+                          .col-xs-4
+                            a.pull-right.btn.btn-primary(href="javascript:save('kategori')") KAYDET
+              section.content
+                .row
+                  .col-md-11
+                    #loading-example1.box.box-danger
+                      .box-header
+                        // tools box
+                        .pull-right.box-tools
+                          button.btn.btn-danger.btn-sm(data-widget='collapse', data-toggle='tooltip', title='Collapse')
+                            i.fa.fa-minus
+                        // /. tools
+                        i.fa.fa-cloud
+                        h3.box-title Kategori Listesi
+                        br
+                        br
+                        .box-body.table-responsive
+                          table#example1.table.table-bordered.table-striped
+                            thead
+                              tr
+                                th.col-md-2 Resim
+                                th Kategori Adı
+                                th Durum
+                                th Ana Kategori
+                                th Alt Kategori
+                                th #
+                            tbody.kat
+                            tfoot
+                              tr
+                                th Resim
+                                th Kategori Adı
+                                th Durum
+                                th Ana Kategori
+                                th Alt Kategori
+                                th #
+             
+  block scripts
+    script(src="/static/js/admin/plugins/datatables/jquery.dataTables.js" type="text/javascript")
+    script(src="/static/js/admin/plugins/datatables/dataTables.bootstrap.js" type="text/javascript") 
+    script(src="/static/js/jasny/jasny-bootstrap.js")
+    script(type="text/javascript").
+      $(document).ready(function(){
+        getList();
+        $('#new_kategori_select').on("change",function(){
+          console.log("değişti");
+        });
+      });
+      function getList(){
+        postData('/ajax/getList',{model_list:["kategori"]},function(retVal){
+          var us=0;
+          $('.kat').html(""); $('#kat_secim').html("");
+          var kategori_paket=usencode(JSON.stringify(retVal.kategori));
+          retVal.kategori.forEach(function(kayit){
+            us++;
+            var cocuk="";
+            kayit.children.forEach(function(record){
+              cocuk=cocuk+record.name+",";
+            });
+            var status=kayit.status==true?"open":"close";
+            var parent_name=kayit.parent.name!=""?kayit.parent.name:"Ekle";
+            var resim=kayit.picture==""?"<button type='button' onclick='javascript:resim_ekle(\""+kayit._id+"\")' class='btn btn-info btn-sm'><i class='fa fa-x fa-plus-square'></i></button>":"<a href='javascript:resim_ekle(\""+kayit._id+"\")'><img class='resim_buyult' src='/getimg/"+kayit.picture+".jpeg'  style='width:150px;height:120px;'></a>";
+            $('#kat_secim').append("<option id="+kayit._id+">"+kayit.kategori_adi+"</option>");
+            $('.kat').append("<tr><td>"+resim+"</td>"+
+                                "<td ><a href='javascript:pop_up(\""+kayit._id+"\",\"kategori_adi\")'>"+kayit.kategori_adi+"</a></td>"+
+                                "<td><a href='javascript:status(\""+kayit._id+"\",\""+kayit.status+"\")'><span class='glyphicon glyphicon-eye-"+status+"' aria-hidden='true'></span></a></td>"+
+                                "<td id='p_name"+kayit._id+"'><a style='color:blue important!;' href='javascript:new_kategori(\""+kayit._id+"\",\""+kategori_paket+"\")'>"+parent_name+"</a></td>"+
+                                "<td >"+cocuk+"</td>"+
+                                "<td><a href='javascript:sil(\""+kayit._id+"\",\"kategori\",\"getList\")'><span class='glyphicon glyphicon-trash' aria-hidden='true'></span></a></td></tr>");
+            if(us==retVal.kategori.length)
+              $('#example1').dataTable();
+          });
+        });
+      }
+      function pop_up(id,alan){
+        $('#genel').modal();
+        $('#genel .modal-title').html('').append('<b>Yeni Değer</b>');
+        $('#genel .modal-body').html('').append('<input id="new_value" class="form-control" type="text" placeholder="Yeni Değeri Giriniz">');
+        $('#genel .modal-footer').html('').append('<a href="javascript:update_alan(\''+id+'\',\''+alan+'\',\'kategori\',\'getList\')" class="btn btn-primary">Güncelle</a>');
+      }
+      function status(id,durum){
+        console.log(durum);
+        if(durum=="true")
+          var status=false;
+        else 
+          var status=true;
+        console.log(status);
+        postData('/ajax/update_alan',{id:id,model:"kategori",alan:"status",yeni_deger:status},function(retVal){
+          if(retVal.status=="1")
+            getList();
+          else 
+            alert(retVal.status);
+        });
+      }
+      function new_kategori(id,kategori_paket){
+        var kategoriler=JSON.parse(usdecode(kategori_paket));
+        console.log(kategoriler);
+        $('#p_name'+id).html("").append('<select id="new_kategori'+id+'" class="form-control col-xs-10 input-sm"></select>'+
+                                        '<button type="button" onclick="javascript:update_parent(\''+id+'\')" class="btn btn-info btn-sm"><i class="fa fa-x fa-check-square-o"></i></button>');
+        $('#new_kategori'+id+'').append('<option disabled selected>KAtegori Seçiniz</option>');
+        var children;
+        kategoriler.forEach(function(kayit){
+          if(id==kayit._id)
+            children=kayit.children;
+        });
+        kategoriler.forEach(function(kayit){
+          var status=true;
+          children.forEach(function(record){
+            if(record.id==kayit._id)
+              status=false;
+          });
+          if(kayit._id!=id && status==true)
+            $('#new_kategori'+id+'').append('<option id='+kayit._id+'>'+kayit.kategori_adi+'</option>');
+        });
+      }
+      function update_parent(id,parent_id,parent_name){
+        postData('/ajax/update_parent',{id:id,model:"kategori",alan:"parent",new_p_id:$('#new_kategori'+id+' option:selected').attr('id'),new_p_name:$('#new_kategori'+id+' option:selected').val()},function(retVal){
+          if(retVal.status=="1" && retVal.status!=undefined)
+            getList();
+          else 
+            alert(retVal.e);
+        });
+      }
+      function resim_ekle(id){
+        $('#genel').modal();
+        $('#genel .modal-title').html('').append('<b> Fatura Şablon Resmi  </b>');          
+        $('#genel .modal-body').html('').append('<div data-provides="fileinput" class="fileinput fileinput-new">'+
+                                                  '<div id="resim_veri" data-trigger="fileinput" style="width: 550px; height: 350px;" class="fileinput-preview thumbnail"></div>'+
+                                                  '<div><span class="btn btn-default btn-file"><span class="fileinput-new">Resim Seç</span><span class="fileinput-exists">Değiştir</span>'+
+                                                      '<input type="file" name="..."/></span><a href="#" data-dismiss="fileinput" class="btn btn-default fileinput-exists">Kaldır</a></div>'+
+                                                '</div>');
+        $('#genel .modal-footer').html('').append('<button type="button" class="btn btn-primary btn-sm" onclick="resim_kaydet(\''+id+'\');" data-toggle="modal" data-target="#myModal">KAYDET</button>');
+      }
+      function resim_kaydet(id){
+        console.log(id);
+        postData('/ajax/update_resim',{img:$('#resim_veri img').attr('src'),kategori_id:id},function(retVal){
+          $('#genel').modal("hide");
+          getList();
+        });
+      }
+    

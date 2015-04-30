@@ -1,0 +1,38 @@
+aside.left-side.sidebar-offcanvas
+    
+      section.sidebar
+        // Sidebar user panel
+        .user-panel
+          .pull-left.image
+            img.img-circle(src='/static/img/admin/avatar3.png', alt='User Image')                       
+          .pull-left.info
+            p user                     
+            a(href='#')
+              i.fa.fa-circle.text-success   
+        
+        ul.sidebar-menu
+          li.active
+            a(href='/adm/dashboard')
+              i.fa.fa-dashboard 
+              span Genel Görünüm       
+          li
+            a(href='/adm/user')
+              i.fa.fa-user 
+              span Kullanıcı İşlemleri    
+          li
+            a(href='/adm/role')
+              i.fa.fa-star-half-empty 
+              span Role İşlemleri    
+          li
+            a(href='/adm/kategori')
+              i.fa.fa-gears 
+              span Kategori İşlemleri        
+          li
+            a(href='/adm/konu')
+              i.fa.fa-bookmark 
+              span Konu İşlemleri        
+          li
+            a(href='/adm/mesaj')
+              i.fa.fa-comment-o 
+              span Mesaj İşlemleri                         
+      // /.sidebar

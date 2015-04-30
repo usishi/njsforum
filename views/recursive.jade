@@ -1,0 +1,42 @@
+extends ./parts/_layout
+block pagecontent
+		|Kategoriler
+		.erka
+			ul.kategori
+	block js 
+	script.
+		$(document).ready(function(){
+			postData('/ajax/getList',{model_list:["kategori"]},function(retVal){
+				recursive_example(usencode(JSON.stringify(retVal.kategori)));
+			});
+		});
+		function recursive_example(retVal){
+			var data=JSON.parse(usdecode(retVal));
+			data.forEach(function(kayit){
+				//console.log(kayit.kategori_adi+" "+kayit.parent.id);
+				if(kayit.parent.id=="" && kayit.children.length>0){
+					console.log(kayit.kategori_adi+" ana kategori VE ÇOCUKLARI VAR "+kayit._id);
+					
+					$('.kategori').append("<li>"+kayit.kategori_adi+"<ul  id="+kayit._id+"></ul></li>");
+					cocuk_bak(kayit.children);
+				}
+				else if(kayit.parent.id=="" && kayit.children.length==0){
+					console.log(kayit.kategori_adi+" ana kategori ve çocuğu yok");
+					$('.kategori').append("<li>"+kayit.kategori_adi+"</li>")
+				}
+			});
+			function cocuk_bak(cocuklar){
+				cocuklar.forEach(function(record){
+					data.forEach(function(record2){
+						if(record2._id==record.id){
+							console.log(record2.parent.id);
+							$('#'+record2.parent.id).append("<li>"+record2.kategori_adi+"<ul  id="+record2._id+"></ul></li>");
+							console.log(record.name+" benim ana kategorim "+record2.parent.name);
+							if(record2.children.length>0)
+								cocuk_bak(record2.children);
+						}
+					});
+				});
+			}
+
+		}

@@ -1,0 +1,58 @@
+extends ./parts/_layout
+block content
+        include ./parts/top
+        section.subheader
+          .clearfix
+            .fxicon
+              i.fa.fa-home  
+            ul.index-pos.pull-left
+              li.index-title
+                h1 Anasayfa            
+              li.index-sub Burasi Anasayfa sayfa     
+            .search-box.pull-right
+                form
+                    fieldset
+                      input#arama( type='text1', maxlength='128',onkeydown="return kd(event)", title='Arama', placeholder='Arama', value='')
+        include ./parts/main
+        include ./parts/footer
+block js 
+     script(type="text/javascript").
+      var session;
+      $(document).ready(function(){
+          session    ='!{user}';
+          console.log(session); 
+          var sonuclar   ='!{sonuc}';
+          var  kullanici ='!{bilgi}';
+        
+           $('.cevrim').html("");
+          if(JSON.parse(sonuclar).user==null){          
+                $('.cevrim').append('<a href="#" class="blogImage" data-original-title="" title=""><img src="/static/img/2.gif" width="50" height="50" alt="User avatar"></a>'+
+                '<a href="" title="" data-original-title=" Ziyaretçi"><i class="fa fa-mail-forward text-muted"></i>  Ziyaretçi</a>'+
+                '<p><i class="fa fa-user"></i> By: <a href="" style="color: #AA0000;" class="username-coloured" data-original-title="" title="">Ziyaretçi</a></p>'+
+                '<p><i class="fa fa-clock-o"></i> '+JSON.parse(sonuclar).ekleme_tarihi+'</p>');
+          }else{
+                  $('.cevrim').append('<a href="#" class="blogImage" data-original-title="" title=""><img src="/static/img/2.gif" width="50" height="50" alt="User avatar"></a>'+
+                '<a href="" title="" data-original-title=" Ziyaretçi"><i class="fa fa-mail-forward text-muted"></i>  Ziyaretçi</a>'+
+                '<p><i class="fa fa-user"></i> By: <a href="" style="color: #AA0000;" class="username-coloured" data-original-title="" title="">Ziyaretçi</a></p>'+
+                '<p><i class="fa fa-clock-o"></i> </p>');
+          }
+      });
+      function kd(e)
+      {
+          var intKey = (window.Event) ? e.which : e.keyCode;
+          if (intKey == 13) { 
+              var deger=document.getElementById("arama").value;
+               arama(deger);              
+              return false;
+          }
+          return true;
+      }  
+      function arama(params){
+        if(params.length > 2){
+          window.location ="/pg/search/"+params;
+        }else{
+          mesaj_gonder('Arama','Lütfen Arama kısmına en az üç harfli kelime girin.','#660000')
+        }
+        
+      }    
+             

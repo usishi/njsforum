@@ -1,0 +1,36 @@
+extends ./parts/_layout
+block content
+		include  ./parts/top
+		br
+		.well
+			.side-segment
+			h3 Aktivasyon 
+			.aktivasyon
+		include  ./parts/footer
+block js
+	script.
+		$(document).ready(function(){
+			var deger ="!{param}";
+			console.log(deger);
+				onay(deger);
+			if(deger !=""){
+				onay(deger);
+			}else{
+				window.location="/";
+			}
+		});
+		function onay(deger1){
+			console.log(deger1);
+			$('.aktivasyon').html("");
+			postData('/ajax/onayKodu',{param:deger1},function(cvp){
+				console.log(cvp.girisDurum);
+				if(cvp.girisDurum == 1){
+					$('.aktivasyon').append("<div style='text-align:center;color: #169FE6; font-size:36px;'> Kayıt Başarıyla Tamamlanmıştır.</div>");
+					setTimeout(function(){window.location="/";},1000);
+				}
+				if(cvp.girisDurum != 1){
+					$('.aktivasyon').append("<div style='text-align:center;color: #169FE6; font-size:36px;'> Aktivasyon Gerçekleşmedi.</div>");
+					 setTimeout(function(){window.location="/";},1000);
+				}
+			});
+		}

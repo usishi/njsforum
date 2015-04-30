@@ -1,0 +1,262 @@
+/* CSS Document */
+
+footer .navList a {
+  color: #169FE6 !important;
+}
+.copyPaste{
+	
+}
+.icons,.icons1{
+	border-radius: 22px;
+	display: block;
+	position: absolute;
+	top: 12px;
+	right: -8px;
+	background: red;
+	padding: 0px 4px;
+	color: #fff;
+	font-size: 13px;
+	font-weight: bold;
+}
+.yukleniyor {
+	display: none;
+}
+.loading{
+	
+	text-align: left;
+	display: block;
+	margin-left: 25px;
+}
+.email_link{
+	display:block;
+	line-height: 26px;
+    color: #fff;
+    margin-bottom: 5px;
+    text-align: left ! important;
+}
+.tableBaslik{
+	line-height: 30px;
+	background:#f3f3f3;
+	display: block;
+}
+.active{
+	
+	border: 1px solid #ffffff;
+
+}
+.tasarim{
+	background:url('../img/bg1.jpg') repeat 0 0 ! important;
+	display:block; 
+}
+.aliste{
+	display:block;
+	width: 200px;
+	background: #333;
+	display: none;
+}
+.uyaris{
+      background-color: #f3f3f3;
+	  position: absolute;
+	  height: 198px;
+	  width: 300px;
+	  z-index: 5000;
+	  left: -100px;
+	  border-radius: 6px;
+	  margin-top: 10px;
+	  border: 1px solid #169FE6;
+	  opacity: 0.8;
+	  padding-top: 6px;
+}
+.uyaris li{
+	display:block;
+	margin-left:12px;
+	color:#333;
+	font-size:16px;
+}
+.uyaris li a{
+	color:#169FE6;
+}
+.uyaris li a:hover{
+	color:#000;
+}
+.gstr{
+	display:none;
+}
+.gstr1{
+	display:block;
+}
+.dataTables_wrapper .dataTables_filter input{
+	margin:0px ! important;
+}
+.form-control{
+	height:32px;
+}
+.jarviswidget>header>h2{
+	color:#fff;
+	font-weight: bold;
+}
+.dt-toolbar {
+
+  border-bottom: 1px solid #fff ! important; 
+  background: #ffffff ! important; 
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  color: white !important;
+  border: 1px solid #ffffff ! important;
+  background-color: #fff ! important;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #585858), color-stop(100%, #111111));
+  background: -webkit-linear-gradient(top, #585858 0%, #111111 100%);
+  background: -moz-linear-gradient(top, #585858 0%, #111111 100%);
+  background: -ms-linear-gradient(top, #585858 0%, #111111 100%);
+  background: -o-linear-gradient(top, #585858 0%, #111111 100%);
+  background: linear-gradient(to bottom, #ffffff 0%, #ffffff 100%) ! important;
+}
+.alinties{
+	display:inline-block;
+	position: relative;
+}
+.uyaris1{
+      background-color: #f3f3f3;
+	  position: absolute;
+	  height: 198px;
+	  width: 300px;
+	  z-index: 5000;
+	  left: -100px;
+	  border-radius: 6px;
+	  margin-top: 10px;
+	  border: 1px solid #169FE6;
+	  opacity: 0.8;
+	  padding-top: 6px;
+}
+.uyaris1 li{
+	display:block;
+	margin-left:12px;
+	color:#333;
+	font-size:16px;
+}
+.uyaris1 li a{
+	color:#169FE6;
+}
+.uyaris1 li a:hover{
+	color:#000;
+}
+.gstr{
+	display:none;
+}
+/****  Messages  ****/
+#main-content.page-mailbox { padding: 0 15px 0 0;}
+.page-mailbox .col-md-4{ padding-right:  0;}
+.page-mailbox .col-lg-8{ padding-left:  0;padding-right:  0}
+.page-mailbox .panel{ margin-bottom:  0}
+#messages-list, #message-detail {overflow: hidden}
+.message-action-btn i {font-size: 20px;line-height: 40px;}
+.icon-rounded { text-align: center; border-radius: 50%; width: 40px;height:40px;border:1px solid #BDBDBD;color:#bdbdbd;display: inline-block}
+.icon-rounded:hover {border:1px solid #121212;color:#121212;cursor: pointer}
+.icon-rounded.heart:hover{border:1px solid #D9534F;color:#D9534F}
+.icon-rounded.heart-red  {border:1px solid #D9534F;color:#D9534F}
+.icon-rounded.gear:hover{border:1px solid #3F97C9;color:#3F97C9}
+.panel-body.messages { padding: 0;}
+.border-bottom {border-bottom: 1px solid #EFEFEF !important;}
+#main-content .messages a.btn {color:#B3B3B3;}
+.message-item{border:none;border-bottom: 1px solid #ECEBEB !important; margin:0;padding:10px 15px;display: block}
+.message-item h5{margin-top:0;}
+.message-item p{margin-bottom:0;overflow: hidden;}
+.message-item .message-checkbox{height:30px;}
+.message-active {color:#fff;background-color:#00A2D9 }
+a.message-item.message-active:hover{color:#fff;background-color:#008fc0;}
+a.message-item:hover{text-decoration:none;background-color:#eaeaea;}
+.messages .message-item img{border-radius: 3px;}
+.message-item-right{padding-left:33px;}
+.withScroll {height: auto;overflow: auto;overflow:hidden;}
+.messages .mCustomScrollBox {overflow: hidden !important;}
+.message-result .message-item{padding-left:0;}
+.message-result .message-item-right{padding-left:0;}
+.message-title{margin-top:0;}
+.message-body{padding:0 20px 20px 20px;}
+.message-attache .media {float:left; padding-right:30px;margin-top: 0;padding-bottom:30px;}
+.message-attache {border-top: 1px solid #ECEBEB !important;padding-top:10px;}
+.message-between {height: 8px;background-color: #E7E7E7;}
+.footer-message { padding-top:20px;}
+.send-message .form-control {height:34px;}
+.pos-rel{
+	position: relative;
+}
+/* Native input positioning */
+.ui-checkbox,
+.ui-radio {
+  position: absolute;
+  left: .466em;
+  top: 50%;
+   /*width: 22px; */
+  height: 22px;
+  margin: -11px 0 0 0;
+  outline: 0 !important;
+  z-index: 1;
+}
+.duzlem{
+	width:48%;
+}
+.duzlem1{
+	display:inline-block;
+	float:left;
+}
+.konum{
+	position: absolute;
+	top:10px;
+	right:5px;
+	
+
+}
+.ikon{
+	background: url("/static/img/arti.png") no-repeat 0 0;
+	display: inline-block;
+	width:16px;
+	height: 16px;
+	display: inline-block;
+}
+.ikon.selected{
+   background: url("/static/img/eksi.png") no-repeat 0 0;
+	display: inline-block;
+	width:16px;
+	height: 16px;
+	display: inline-block;	
+}
+.gelenMesaj:hover,.gidenMesaj:hover,.yildiz:hover{
+  background:#dfdfdf ! important;
+  cursor:pointer;
+
+}
+.tab .kutu{
+	display:none;
+
+}
+.tab .kutu.selected{
+	display:block;
+	
+}
+.kutu01 {
+   width: 440px;
+   height: 300px;
+   overflow: hidden;
+   position: relative;
+}
+.kutu02 {
+   width: 440px;
+   height: 300px;
+   overflow: hidden;
+   position: relative;
+}
+.kutu03 {
+   width: 440px;
+   height: 300px;
+   overflow: hidden;
+   position: relative;
+}
+.message-item-right:hover{
+	background: #c0c0ff;
+	cursor: pointer;
+}
+.mesajListesi{
+	display:block;
+	margin: 15px 5px 0 ;
+}

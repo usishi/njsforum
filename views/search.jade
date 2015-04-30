@@ -1,0 +1,155 @@
+extends ./parts/_layout
+block content
+        include ./parts/top
+        .side-segment
+            h3 Arama Sonuçları
+        .t1
+        .t2 
+        .t3
+        .t4 
+        .t5
+        .t6 
+        .t7
+        .t8             
+        include ./parts/footer
+block  js
+    script.
+        $(document).ready(function(){
+            var link= window.location.href;
+            var dizi=link.split("/");         
+            bulGetir(dizi[5]);
+            $('.t1').hide();
+            $('.t3').hide();
+            $('.t5').hide();
+            $('.t7').hide();
+        });
+        function bulGetir(param){;
+            var us = 0,adet=0,sayac=0,say=0;
+            $('.sonucListesi').html('');
+            $('.t1').append('<div class="panel panel-default">'+
+                            '<table class="footable table table-striped table-bordered table-white table-primary table-hover default footable-loaded">'+
+                                '<thead>'+
+                                    '<tr>'+
+                                     '<th data-class="expand" class="footable-first-column"><i class="fa fa-list-ol"></i> <a href="" data-original-title="" title="">Konular</a></th>'+    
+                                    '</tr>'+
+                                 '</thead>'+                                
+                            '<tbody class="sonucListesi"></tbody></table></div>');           
+           
+            postData('/ajax/search',{kelime:param},function(retVal){
+                if(retVal.konu.length > 0){
+                    us++;
+                    $('.t1').show();
+                    retVal.konu.forEach(function(cvp){
+                             var veri1      = (cvp.icerik.replace("undefined", ""));
+                             var veri2       =  (veri1.replace(/\\/g, ''));
+                             // console.log(veri2.indexOf('style="width:"'));
+                              var veri3 =veri2.substring(1);
+                              var veri4=veri3.substring(0,veri3.length-1); 
+                             $('.sonucListesi').append('<tr>'+
+                                '<td title="" class="expand footable-first-column"><span class="footable-toggle"></span>'+
+                                '<i class="row-icon-font icon-moon-default  icon-moon-link2 text-muted" title=""></i>'+
+                                '<i class="row-icon-font-mini " title=""></i>'+
+                                '<a href="/pg/konudetay/'+cvp._id+'" class="forumtitle" data-original-title="" title="">'+cvp.konu_baslik+'</a><br>'+
+                                '<small></small>'+
+                                 '</td>'+
+                                
+                        '</tr>');
+                    });                
+                }else{
+
+                    $('.t2').html("").append('<div   id="message" class="well"><h2>Konu</h2>'+
+                            '<p>Aramada hiç bir şey Bulunamadi...</p>'+
+                         '</div>');
+                }
+                $('.t3').append('<div class="panel panel-default">'+
+                            '<table class="footable table table-striped table-bordered table-white table-primary table-hover default footable-loaded">'+
+                                '<thead>'+
+                                    '<tr>'+
+                                     '<th data-class="expand" class="footable-first-column"><i class="fa fa-list-ol"></i> <a href="" data-original-title="" title="">Konular</a></th>'+    
+                                    '</tr>'+
+                                 '</thead>'+                                
+                            '<tbody class="sonucListesi1"></tbody></table></div>'); 
+                if(retVal.kategori.length >0){
+                    us++;
+                    $('.t3').show();
+                    retVal.kategori.forEach(function(cvp){
+                             var veri1      = (cvp.kategori_adi.replace("undefined", ""));
+                             var veri2       =  (veri1.replace(/\\/g, ''));
+                             // console.log(veri2.indexOf('style="width:"'));
+                              var veri3 =veri2.substring(1);
+                              var veri4=veri3.substring(0,veri3.length-1); 
+                             $('.sonucListesi1').append('<tr>'+
+                                '<td title="" class="expand footable-first-column"><span class="footable-toggle"></span>'+
+                                '<i class="row-icon-font icon-moon-default  icon-moon-link2 text-muted" title=""></i>'+
+                                '<i class="row-icon-font-mini " title=""></i>'+
+                                '<a href="/pg/konu/'+cvp._id+'" class="forumtitle" data-original-title="" title="">'+cvp.kategori_adi+'</a><br>'+
+                                '<small></small>'+
+                                 '</td>'+
+                                
+                        '</tr>');
+                    });       
+                }else{
+                     $('.t4').html("").append('<div   id="message" class="well"><h2>Kategori</h2>'+
+                            '<p>Aramada hiç bir şey Bulunamadi...</p>'+
+                         '</div>');
+                }
+                $('.t5').append('<div class="panel panel-default">'+
+                            '<table class="footable table table-striped table-bordered table-white table-primary table-hover default footable-loaded">'+
+                                '<thead>'+
+                                    '<tr>'+
+                                     '<th data-class="expand" class="footable-first-column"><i class="fa fa-list-ol"></i> <a href="" data-original-title="" title="">Yorum</a></th>'+    
+                                    '</tr>'+
+                                 '</thead>'+                                
+                            '<tbody class="sonucListesi2"></tbody></table></div>'); 
+                if(retVal.yorum.length > 0){
+                    adet++;
+                    $('.t5').show();
+                    retVal.yorum.forEach(function(cvp){
+                            var veri1      = (cvp.yorum.replace("undefined", ""));
+                            var veri2       =  (veri1.replace(/\\/g, ''));
+                            var veri3 =veri2.substring(1);
+                            var veri4=veri3.substring(0,veri3.length-1); 
+                            $('.sonucListesi2').append('<tr>'+
+                                '<td title="" class="expand footable-first-column"><span class="footable-toggle"></span>'+
+                                '<i class="row-icon-font icon-moon-default  icon-moon-link2 text-muted" title=""></i>'+
+                                '<i class="row-icon-font-mini " title=""></i>'+
+                                '<a href="/pg/konudetay/'+cvp.konu_id+'" class="forumtitle" data-original-title="" title="">Yorumu oku</a><br>'+
+                                '<small></small>'+
+                                 '</td>'+                                
+                            '</tr>');
+                    });  
+                }else{
+                      $('.t6').html("").append('<div   id="message" class="well"><h2>Yorum</h2>'+
+                            '<p>Aramada hiç bir şey Bulunamadi...</p>'+
+                         '</div>');
+                }
+                 $('.t7').append('<div class="panel panel-default">'+
+                            '<table class="footable table table-striped table-bordered table-white table-primary table-hover default footable-loaded">'+
+                                '<thead>'+
+                                    '<tr>'+
+                                     '<th data-class="expand" class="footable-first-column"><i class="fa fa-list-ol"></i> <a href="" data-original-title="" title="">Üyeler</a></th>'+    
+                                    '</tr>'+
+                                 '</thead>'+                                
+                            '<tbody class="sonucListesi3"></tbody></table></div>'); 
+                if(retVal.member.length > 0){
+                    say++;
+                    $('.t7').show();
+                    retVal.member.forEach(function(cvp2){                           
+                            $('.sonucListesi3').append('<tr>'+
+                                '<td title="" class="expand footable-first-column"><span class="footable-toggle"></span>'+
+                                '<i class="row-icon-font icon-moon-default  icon-moon-link2 text-muted" title=""></i>'+
+                                '<i class="row-icon-font-mini " title=""></i>'+
+                                '<a href="/pg/profil/'+cvp2._id+'" class="forumtitle" data-original-title="" title="">'+cvp2.user_name+'</a><br>'+
+                                '<small></small>'+
+                                 '</td>'+                                
+                            '</tr>');
+                    });  
+                }else{
+
+                      $('.t8').html("").append('<div   id="message" class="well"><h2>Üyeler</h2>'+
+                            '<p>Arama Sonucunda böyle bir üye bulunamadi...</p>'+
+                         '</div>');
+                }
+         
+            });
+        }

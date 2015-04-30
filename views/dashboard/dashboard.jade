@@ -1,0 +1,60 @@
+extends _layout1
+block pagecontent
+    body.skin-blue
+      include ./parts/top
+      div.wrapper.row-offcanvas.row-offcanvas-left
+            include ./parts/menu
+            aside.right-side
+              section.content-header
+                h1  Panel
+                  small            
+                ol.breadcrumb
+                  li
+                    a(href='#')
+                      i.fa.fa-dashboard
+                      |  Haftalık
+                  |                         
+                  li.active İçerik Ekle
+              section.content
+                .row
+                  .col-md-6
+                    #loading-example.box.box-danger
+                      .box-header
+                        // tools box
+                        .pull-right.box-tools
+                          button.btn.btn-danger.btn-sm(data-widget='collapse', data-toggle='tooltip', title='Collapse')
+                            i.fa.fa-minus
+                        // /. tools
+                        i.fa.fa-cloud
+                        h3.box-title USER SAVE
+                      // /.box-header
+                      .box-body.no-padding
+                        .row
+                          .col-sm-7
+                            // bar chart
+                            #bar-chart.chart(style='height: 250px;')
+                          .col-sm-5
+                            .pad
+                              
+                      .box-footer
+                        .row
+                          .col-xs-4.text-center(style='border-right: 1px solid #f4f4f4')
+                           
+                          .col-xs-4.text-center(style='border-right: 1px solid #f4f4f4')
+                       
+                          .col-xs-4
+                            button.pull-right.btn.btn-primary KAYDET
+                          // ./col
+                        // /.row
+                      // /.box-footer
+                    // /.box
+
+  block scripts 
+    script(type="text/javascript").
+      $(document).ready(function(){
+      })
+              
+
+            
+
+   

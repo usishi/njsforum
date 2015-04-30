@@ -1,0 +1,38 @@
+extends _layout1
+block pagecontent
+    body.skin-blue
+      include ./parts/top
+      div.wrapper.row-offcanvas.row-offcanvas-left
+            include ./parts/menu
+            aside.right-side
+              section.content-header
+                h1  Kullanıcı İşlemleri
+                  small            
+                ol.breadcrumb
+                  li
+                    a(href='#')
+                      i.fa.fa-dashboard
+                      |  Haftalık
+                  |                         
+                  li.active İçerik Ekle
+              section.content
+                .row
+                  .col-md-11
+                    #loading-example.box.box-danger
+                      .box-header
+                        // tools box
+                        .pull-right.box-tools
+                          button.btn.btn-danger.btn-sm(data-widget='collapse', data-toggle='tooltip', title='Collapse')
+                            i.fa.fa-minus
+                        // /. tools
+                        i.fa.fa-cloud
+                        h3.box-title Kullanıcı Listesi
+                        br
+                        br
+                        br
+
+
+  block scripts 
+    script(type="text/javascript").
+      $(document).ready(function(){
+      });

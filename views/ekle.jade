@@ -1,0 +1,123 @@
+extends ./parts/_layout
+block content
+        include ./parts/top
+        section.subheader
+          .fxicon
+            i.fa.fa-cogs
+          ul.index-pos.pull-left
+            li.index-title
+              h1 Konu  Ekleme
+            li.index-sub Konu  Ekleme
+        form(action="",method="POST",name="Konu_Ekle")
+          .row 
+            .col-xs-12
+                label.control-label(for='konuBaslik') Kategori:
+                select.form-control#kate
+                  option(value="0") Lütfen  Kategori Seçiniz
+                 
+            .col-xs-12
+                label.control-label(for='konuBaslik') Konu Başlığı:
+                input.form-control.input-sm(type='text', name='konuBaslik', size='25', value='', title='konuBaslik', placeholder='konu')#konuBaslik
+          .row 
+            #wid-id-0.jarviswidget.jarviswidget-color-blue(data-widget-colorbutton='false', data-widget-editbutton='false', data-widget-togglebutton='false', data-widget-fullscreenbutton='false', data-widget-sortable='false')
+       
+          .row(style="margin:1px 15px 0 15px! important;")
+            .jarviswidget-editbox
+            .widget-body.no-padding.click2edit
+              .summernote
+              .smart-form(style="margin-top:10px;")
+                .btn-group
+                  button.btn.btn-sm.btn-primary(type='button',onclick="konuKapat()",style="margin-right:10px;")
+                    i.fa.fa-times
+                    |  Kapat
+                .btn-group
+                  button.btn.btn-sm.btn-success(type='button',onclick="konuKaydet();")
+                    i.fa.fa-check
+                    |  Kaydet                            
+        include ./parts/footer
+block js
+    script(src='/static/js/plugins/summernote/summernote.min.js')
+    script(src='/static/js/plugins/markdown/markdown.min.js')
+    script(src='/static/js/plugins/markdown/to-markdown.min.js')
+    script(src='/static/js/plugins/markdown/bootstrap-markdown.min.js')
+    script.
+      var deger; 
+      $(document).ready(function() {
+          var session='!{user}';
+          deger='!{param}';
+          console.log(JSON.parse(session).user_name);
+          if(JSON.parse(session)._id =="" || JSON.parse(session)._id=="undefined" ){
+            window.location="/pg/login";
+          }else{
+            var degerim ="!{param}";
+            $('.summernote').summernote({
+                height : 180,
+                focus : false,
+                tabsize : 2,
+              onImageUpload: function(files, editor, welEditable) {
+                sendFile(files[0], editor, welEditable);
+              }
+            });
+            $("#mymarkdown").markdown({
+                autofocus:false,
+                savable:true
+            })
+            kategoriListe(degerim);
+          }
+      });
+      function konuKapat(){
+        window.location.href="/pg/konu/"+deger;
+      }
+      function konuKaydet(){
+        var tarihsaat=new Date(),us =0;
+        var dtarih =tarihsaat.toLocaleString();
+        var katID  =$("#kate option:selected").val();
+        var  us    =katID.search("p");        
+          if(us>=0){
+             mesaj_gonder('Ana Kategori','Lütfen Alt Kategori Seçiniz','#660000')
+          }else if((getOValue('konuBaslik') =="" ) || ($('.note-editable.custom-scroll').code()=="")){
+              mesaj_gonder('Uyari','Lütfen Gerekli  yerleri doldurunuz.','#660000')
+          }else{
+            var kayit = {
+                          bolum           :"konu",
+                          kategori_id     :katID,
+                          kategori_adi    :$("#kate option:selected").text(),
+                          konu_baslik     : getOValue('konuBaslik'),
+                          icerik          : JSON.stringify(($('.note-editable.custom-scroll').code())),
+                          sayi            :0,
+                          ekleme_zamani   :dtarih,
+                          schema          :"konu",
+                        }
+                      
+             postData('/ajax/save',{bilgi:kayit},function(retVal){
+                     mesaj_gonder('Yönlendiriliyor','Yönleniyor','#660000')
+                     console.log(retVal.sonuc._id);
+                     window.location.href="/pg/konudetay/"+retVal.sonuc._id;
+              });      
+          }          
+      }
+      function kategoriListe(aydi){
+          $('#kate').html('');
+          postData('/ajax/findSome',{model:'kategori',id:aydi},function(sonuc){
+                    //yasak(sonuc.kategori_id);
+                    if(sonuc.parent.id !=""){
+                       console.log(sonuc.children.length);
+                       if(sonuc.children.length==0){
+                          $('#kate').append('<option value="'+sonuc._id+'" >'+sonuc.kategori_adi+'</option>');
+                       }else{
+                          $('#kate').append('<option value="p'+sonuc._id+'" >'+sonuc.kategori_adi+'</option>');
+                           if(sonuc.children.length > 0){
+                               
+                                sonuc.children.forEach(function(sonuc){
+                                    console.log(sonuc);
+                                    $('#kate').append('<option style="color:red; padding-left:9px;" value="'+sonuc.id+'" >'+sonuc.name+'</option>');      
+                                });
+                            }
+                       }
+                    }else{
+                      $('#kate').append('<option value="'+sonuc._id+'" >'+sonuc.kategori_adi+'</option>');
+                    }                 
+          });     
+      }
+
+ 

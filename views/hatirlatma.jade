@@ -1,0 +1,60 @@
+extends ./parts/_layout
+block content
+        include ./parts/top
+        section.subheader
+          .clearfix
+            .fxicon
+              i.fa.fa-cogs
+            ul.index-pos.pull-left
+              li.index-title
+                h1 Şifremi Unuttum
+              li.index-sub Set your preferences
+            .search-box.pull-right
+              form
+                    fieldset
+                      input#arama( type='text1', maxlength='128',onkeydown="return kd(event)", title='Arama', placeholder='Arama', value='')
+
+        .side-segment
+            h3 Şifremi Unuttum
+        .well
+            fieldset
+              .yukleniyor
+              .col-md-6
+                .form-group
+                  label(for='email') Eposta adres:
+                  .input-icon.left
+                    i.icon-moon-at
+                    input#email.form-control.input-sm(type='text', size='25', maxlength='100', placeholder='Örnek:usishi@usishi.com')
+                .form-group
+                  button.btn.btn-default(onclick='sifre();') Gönder
+              .pull-right.hidden-xs.hidden-sm
+                .admin-header-head
+                  .user-fxicon.user-fxicon-remind
+                    i.icon-moon-protecteddirectory
+        include  ./parts/footer
+       
+block js 
+    script.
+        function sifre(){
+            if(getOValue('email')==""){
+                mesaj_gonder('Uyarı','Lütfen email  giriniz..','#000000');
+            }else{
+               postData('/ajax/mesajGonder',{email:getOValue('email')},function(cvp){
+                   if(cvp =="hata"){
+                        mesaj_gonder('Uyarı','Eposta Adresiniz bulunamadi..','#F1502F');
+                   }else{
+                     $('.yukleniyor').show();
+                     $('.yukleniyor').append("<div class='loading'><img src='/static/img/482.gif' width='50' height='50'> İşleminiz gerçekleşiyor.</div>");
+                      setInterval(function(){window.location.href="/pg/login"},5000);
+                   }
+               });
+           }
+        }
+        function arama(params){
+          if(params.length > 2){
+            window.location ="/pg/search/"+params;
+          }else{
+            mesaj_gonder('Arama','Lütfen Arama kısmına en az üç harfli kelime girin.','#660000')
+          }
+        
+        }

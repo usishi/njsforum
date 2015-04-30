@@ -1,0 +1,59 @@
+extends ./parts/_layout
+block content
+		include ./parts/top
+		br
+		.well.tasarim
+			.row
+				.col-xs-12.col-sm-6.col-md-8
+					form 
+						.form-group.kime							
+						.form-group
+							input.form-control#konu(type="text", placeholder="Konu")
+						.form-group
+							textarea#metin.form-control(rows="5")
+						.form-group
+							button(type="button",onclick="sendMesaj();").btn.btn-primary Gönder
+		include ./parts/footer
+block js
+	script.
+		var kontrol;
+		$(document).ready(function(){
+			var deger 	= "!{param}";
+				kontrol ='!{user}';
+			kime(deger);
+		});
+		function kime(param){
+			console.log(param);
+			$('.kime').html("");
+			postData('/ajax/findSome',{model:'user',id:param},function(veri){
+				$('.kime').append('<input class="form-control" id="kime" type="text" value="'+veri.user_name+'">');
+			});
+		}
+		function sendMesaj(){
+				var isim=JSON.parse(kontrol).user_name;
+				var t = new Date();
+				var gecerli_gun = t.getDate();
+				var gecerli_ay = t.getMonth() + 1; 
+				var gecerli_yil = t.getFullYear();
+				if(getOValue('konu')!=""){
+					if(getOValue('metin')!=""){
+						var kayit = {
+									alici:getOValue('kime'),
+									title:getOValue('konu'),
+									mesaj:getOValue('metin'),
+									gonderen:isim,							
+								}
+						postData('/ajax/savemesaj',{veri:kayit},function(cvp){
+							if(cvp=="okey"){
+							 	window.history.back();
+							}else{
+								alert("Mesaj Gönderiken Hata olustu.Lütfen Tekrar deneyiniz ");
+							}
+						});
+					}else{
+						 mesaj_gonder('Hata','Lütfen içerik  giriniz','#E808F8');
+					}
+				}else{
+						 mesaj_gonder('Hata','Lütfen Konu Başlığı giriniz.','#E808F8');
+				}
+		}

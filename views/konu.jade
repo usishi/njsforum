@@ -1,0 +1,238 @@
+extends ./parts/_layout
+block content
+        include ./parts/top
+        section.subheader
+            .clearfix
+            .fxicon
+                i.fa.fa-home  
+            ul.index-pos.pull-left
+                li.index-title
+                    h1 Anasayfa            
+                li.index-sub Burasi Anasayfa sayfa     
+            .search-box.pull-right
+                form
+                    fieldset
+                      input#arama( type='text1', maxlength='128',onkeydown="return kd(event)", title='Arama', placeholder='Arama', value='')              
+        .clearfix
+        br
+        .clearfix
+            .pull-right   
+            .pull-left
+                a.btn.btn-default.ekle(href='', data-original-title='Yorum Ekle', role='button')
+                    i.fa.fa-plus
+                    |  Konu Ekle
+        .clearfix
+        br
+        fieldset
+        .konular
+        .clearfix
+        .konuListe
+        .yorumEkle
+        .clearfix
+          
+        include  ./parts/footer
+block js 
+    script(src='/static/js/plugins/summernote/summernote.min.js')
+    script(src='/static/js/plugins/markdown/markdown.min.js')
+    script(src='/static/js/plugins/markdown/to-markdown.min.js')
+    script(src='/static/js/plugins/markdown/bootstrap-markdown.min.js')
+    script(type="text/javascript").
+        var degerim;
+        $(document).ready(function(){
+            var kategoriID  ="!{param}";
+            session         ='!{user}';
+            var dt          = new Date();
+            var time        = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+            $('.summernote').summernote({
+                    height : 180,
+                    focus : false,
+                    tabsize : 2
+            });
+            $("#mymarkdown").markdown({
+                    autofocus:false,
+                    savable:true
+            });
+            $('.ekle').attr('href','javascript:yonlendir(\''+kategoriID+'\')');
+            $('a.ekle').click(function(){
+                $('.ekle').attr('href','javascript:yonlendir(\''+kategoriID+'\')');
+            });
+            get_kategoriName(kategoriID);
+            //konuGetir(kategoriID);
+            yasak(session,kategoriID);
+        });
+        function cocuk(child){
+            var us="";
+            child.forEach(function(kayit){
+                us=us+"<a style='text-decoration:underline;' href='javascript:konuGetir(\""+kayit.id+"\")'>"+kayit.name+"</a>&nbsp;&nbsp;";
+            });
+            return us;
+        }
+       
+        function get_kategoriName(kategoriID){
+           var us_kategori=[],parametre="";
+            postData('/ajax/findSome',{model:'kategori',id:kategoriID},function(sonuc){
+               // console.log(sonuc);
+                $('.konular').append('<table class="footable table table-striped table-bordered table-white table-primary table-hover default footable-loaded">'+ 
+                                    '<thead>'+
+                                        '<tr>'+
+                                            '<th data-class="expand" class="footable-first-column"><i class="fa fa-group"></i> '+sonuc.kategori_adi+'</th>'+
+                                            '<th class="large80" data-hide="phone"><i class="fa fa-bar-chart-o"></i> Görünüm</th>'+
+                                            '<th class="large20 footable-last-column" data-hide="phone"><i class="fa fa-comments-o"></i> Son Mesaj</th>'+
+                                        '</tr>'+
+                                        '<tr>'+
+                                            '<th data-class="expand" class="footable-first-column">'+cocuk(sonuc.children)+'</th>'+
+                                            '<th class="large80" data-hide="phone"></th>'+
+                                            '<th class="large20 footable-last-column" data-hide="phone"></th>'+
+                                        '</tr>'+
+                                    '</thead> '+
+                                    '<tbody class="konuList">'+
+                                    '</tbody>'+
+                                    '</table>');
+                if(sonuc.children.length > 0 ){
+                    sonuc.children.forEach(function(record){
+                        us_kategori.push(record.id);
+                    });
+                postData('/ajax/toplu_konuGetir',{model:"konu",idler:us_kategori},function(retVal){
+                    var total;
+                    sonuc.children.forEach(function(jojuk){
+                        retVal[jojuk.id].forEach(function(konu){
+                            mesaj_toplam(konu._id,function(cb){/////////toplam yorum sayısını callback yaptırıyor.
+                                mesajlar(konu._id,function(cb2){
+                                    var date =konu.ekleme_zamani.split("/");
+                                    $('.konuList').append('<tr>'+
+                                                        '<td class="expand footable-first-column"><span class="footable-toggle"></span>'+
+                                                        '<i class="row-icon-font icon-moon-default2  text-muted" title="No unread posts"></i>'+
+                                                        '<i class="row-icon-font-mini " title="No unread posts"></i>'+
+                                                        '<a href="/pg/konudetay/'+konu._id+'" class="topictitle" data-original-title="" title="">'+konu.konu_baslik+'</a>'+
+                                                        '<br>'+
+                                                        
+                                                        '<i class="fa fa-user"></i><a href="#" style="color: #AA0000;" class="username-coloured" data-original-title="" title="">&nbsp;'+konu.ekleyen.name+'</a>'+ 
+                                                        '&nbsp;<i class="fa fa-clock-o"></i>&nbsp; <small>'+date[1]+'.'+date[0]+'.'+date[2]+'</small>'+
+                                                    '</td>'+
+                                                    '<td class="center">'+konu.sayi+' Okuma <br>'+cb+' Yorum</td>'+
+                                                    '<td class="center footable-last-column">'+cb2+'</td>'+
+                                                '</tr>');
+                                });
+               
+                           });
+                        });
+                        postData('/ajax/bul',{model:'konu',id:kategoriID},function(retVal){ 
+                            retVal.forEach(function(kayit){
+                                postData('/ajax/sonYorum',{model:'yorum',bilgi:'konu',id:kayit._id},function(retvals){
+                                    //console.log(retvals);
+                                        $('.konuList').append('<tr>'+
+                                                                '<td class="expand footable-first-column"><span class="footable-toggle"></span>'+
+                                                                '<i class="row-icon-font icon-moon-default2  text-muted" title=""></i>'+
+                                                                '<i class="row-icon-font-mini " title=""></i>'+
+                                                                '<a href="/pg/konudetay/'+kayit._id+'" class="topictitle" data-original-title="" title="">'+kayit.konu_baslik+'</a>'+
+                                                                '<br>'+
+                                                                
+                                                                '<i class="fa fa-user"></i> by <a href="#" style="color: #AA0000;" class="username-coloured" data-original-title="" title="">SiteSplat</a>'+ 
+                                                                '<i class="fa fa-clock-o"></i> <small>03 Apr 2014, 01:57</small>'+
+                                                            '</td>'+
+                                                            '<td class="center">2 Replies <br> 1313 Views</td>'+
+                                                            '<td class="center footable-last-column"><i class="fa fa-user"></i> by <a href="./memberlist.php?mode=viewprofile&amp;u=221" data-original-title="" title="">deliac</a>'+
+                                                            '<a rel="tooltip" data-placement="right" data-original-title="View the latest post" href=""><i class="mobile-post fa fa-sign-out"></i></a> <br><i class="fa fa-clock-o"></i> <small>22 Jan 2015, 11:19</small>'+
+                                                            '</td>'+
+                                                        '</tr>');
+                                });
+                            });
+                            
+                        });
+                    });
+                });
+                 }else {
+                    konuGetir(kategoriID);
+                }
+                
+            });
+        }
+        function konuGetir(ID){
+            var us=0;
+            $('.konuList').html("");
+            $('.ekle').attr('href','javascript:yonlendir('+ID+')');
+            postData('/ajax/bul',{model:'konu',id:ID},function(cevapla){
+                cevapla.forEach(function(sonuc){
+                    us++; 
+                     mesaj_toplam(sonuc._id,function(cb){/////////toplam yorum sayısını callback yaptırıyor.
+                       mesajlar(sonuc._id,function(cb2){                
+                            $('.konuList').append('<tr>'+
+                                                '<td class="expand footable-first-column"><span class="footable-toggle"></span>'+
+                                                '<i class="row-icon-font icon-moon-default2  text-muted" title=""></i>'+
+                                                '<i class="row-icon-font-mini " title=""></i>'+
+                                                '<a href="/pg/konudetay/'+sonuc._id+'" class="topictitle" data-original-title="" title="">'+sonuc.konu_baslik+'</a>'+
+                                                '<br>'+
+                                                
+                                                '<i class="fa fa-user"></i>  <a href="" style="color: #AA0000;" class="username-coloured" data-original-title="" title="">'+sonuc.ekleyen.name+'</a>'+ 
+                                                '&nbsp;<i class="fa fa-clock-o"></i> <small>&nbsp;'+sonuc.eklenme_tarihi+'</small>'+
+                                            '</td>'+
+                                             '<td class="center">'+sonuc.sayi+' Okuma <br> '+cb+' Yorum</td>'+
+                                            '<td class="center footable-last-column"><i class="fa fa-user">'+cb2+'</td>'+
+                                        '</tr>');
+                        });
+                    });
+                })
+            })
+        }
+         function yonlendir(id){
+            //console.log("testt"+id);
+            if(session=="")
+            {
+                window.location="/pg/login";
+            }else{
+                window.location="/pg/ekle/"+id;
+            }
+        }  
+        var etiket;
+        function mesajlar(deger,cb){
+            var us=0;
+            postData('/ajax/sonYorum',{model:'yorum',bilgi:'konu',id:deger},function(result){
+               // console.log('deneme '+result);
+              if(result.length > 0){
+                    result.forEach(function(yaz){
+                        us++;
+                        etiket='<i class="fa fa-user"></i> by &nbsp;<a href="#" data-original-title="" title="">'+yaz.ekleyen.name+'</a>&nbsp;<a rel="tooltip" data-placement="right" data-original-title="View the latest post" href="#"><i class="mobile-post fa fa-sign-out"></i></a> <br><i class="fa fa-clock-o"></i> <small>'+yaz.ekleme_zamani+'</small>';
+                        cb(etiket);
+                    });
+               }else if (result == null || result == ""){
+                etiket='Yorum Yok';
+                    cb(etiket)
+               }                
+            });                 
+        }
+        function mesaj_toplam(ID,cb){
+            var deger,sayac=0;
+            postData('/ajax/sonYorum',{model:'yorum',bilgi:'total',id:ID},function(retVal){
+               sayac++;
+               cb(retVal);
+            });
+        }
+        function yasak(deger1,katId){
+            var eleman=[];
+            postData('/ajax/konuBul',{model:'kategori',id:katId},function(cvp){
+                cvp.forEach(function(veri){
+                    veri.children.forEach(function(cvp2){
+                        var deger = JSON.parse(deger1).ban.indexOf(cvp2.id);
+                        console.log(deger);
+                    })
+                })
+            });
+        }
+        function kd(e)
+        {
+              var intKey = (window.Event) ? e.which : e.keyCode;
+              if (intKey == 13) { 
+                  var deger=document.getElementById("arama").value;
+                   arama(deger);              
+                  return false;
+              }
+              return true;
+        }  
+        function arama(params){
+            if(params.length > 2){
+              window.location ="/pg/search/"+params;
+            }else{
+              mesaj_gonder('Arama','Lütfen Arama kısmına en az üç harfli kelime girin.','#660000')
+            }
+        }  
+        

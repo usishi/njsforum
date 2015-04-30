@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+html(lang="tr-TR")
+    head
+        meta(charset='UTF-8')
+        meta(content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no', name='viewport')
+        title  USİSHİ BİLİŞİM FORUM
+        link(rel='stylesheet', type='text/css', media='screen', href='/static/css/alert/alert.css')
+        link(href='/static/css/profile.css',rel='stylesheet')
+        link(rel='stylesheet',  type='text/css' href='/static/js/alert/font-awesome/css/font-awesome.min.css')
+        link(rel='stylesheet', type='text/css', media='screen', href='/static/css/editor/smartadmin-production.min.css')
+        link(rel='stylesheet', type='text/css', media='screen', href='/static/css/editor/smartadmin-skins.min.css')        
+        link(href='/static/css/style.css', rel='stylesheet')
+        link(href='/static/css/style1.css', rel='stylesheet')
+        link(href='/static/css/admin/fullcalendar/fullcalendar.css', rel='stylesheet', type='text/css')
+        link(rel='stylesheet',href='/static/css/admin/daterangepicker/daterangepicker-bs3.css')
+        link(rel='stylesheet',href='/static/css/admin/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css')        
+        link(rel="stylesheet",href="/static/css/jasny/jasny-bootstrap.css",media="screen",type="text/css")       
+        link(rel="stylesheet",href="/static/css/w2ui-1.4.2.css",media="screen",type="text/css")
+        link(href="/static/css/scrollbar/perfect-scrollbar.css" ,rel="stylesheet")
+        link(rel='stylesheet',href='/static/css/jquery.dataTables.css',media="screen",type="text/css")                   
+        script(type='text/javascript',src='/static/js/plugins/head.core.min.js')
+        script(type='text/javascript', src='/static/js/plugins/head.min.js')
+        
+        script(type='text/javascript', src='/static/js/plugins/jquery.min.js')
+        script(type='text/javascript', src='/static/js/alert/static/js/jquery-1.11.1.min.js')
+        script(type='text/javascript', src='/static/js/plugins/bootstrap.min.js')
+        script(type='text/javascript', src='/static/js/plugins/bootstrap-select.min.js')
+        script(type='text/javascript', src='/static/js/plugins/forum_fn.js')
+        script(type='text/javascript', src='/static/js/plugins/jquery.cookie.min.js')
+        script(type='text/javascript', src='/static/js/plugins/footable.min.js')
+        script(type='text/javascript', src='/static/js/plugins/cloudflare.min.js')
+        script(type='text/javascript', src='/static/js/plugins/library.js')
+        script(type='text/javascript', src='/static/js/w2ui-1.4.2.js')
+        //script(type='text/javascript', src='/static/js/plugins/twitterFetcher_v10_min.js')
+        
+        script(type='text/javascript', src='/static/js/alert/smallboxExample.js')
+        script(type='text/javascript', src='/static/js/alert/bigboxExample.js')
+        script(type='text/javascript', src='/static/js/alert/metroMessageBox.js')
+        script(type='text/javascript', src='/static/js/alert/inputBox.js')
+        script(type='text/javascript', src='/static/js/alert/loadingExample.js')
+        script(type='text/javascript', src="/static/js/datepicker/dobPicker.js")
+        script(src='https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js')        
+        script(src='https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js')
+        script(type='text/javascript', src='/static/js/plugins/kutuphane.js')
+        script(type='text/javascript', src='/static/js/usishi.js')
+           
+        script.
+          if ( top !== self ) top.location.replace( self.location.href );// Hey, don't iframe
+    body#phpbb.section-index.ltr    
+        div#wrap.corners.container
+            div#content-forum
+                div.padding_0_40
+                    block content
+    block stylesheets
+    body.skin-blue
+           block pagecontent
+        #genel.modal.fade
+            .modal-dialog
+                .modal-content
+                  .modal-header
+                    button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+                    h4.modal-title
+                  .modal-body
+                  .modal-footer 
+block js
+    script.
+        head.ready(function () {
+           $.fn.tooltip&&$('[rel="tooltip"]').tooltip();$(".selectpicker").selectpicker();$(".selectpicker, .mchat-ttp").tooltip("disable");
+           $(".btn-group [title]").tooltip({container:"body"});
+          // twitterFetcher.fetch("345170787868762112","example1",3,true,false);
+           var totop=$("#totop");
+           totop.click(function(){$("html, body").stop(true,true).animate({scrollTop:0},500);return false});$(window).scroll(function(){if($(this).scrollTop()>600){totop.fadeIn()}else{totop.fadeOut()}});$("button[data-loading-text]").click(function(){var e=$(this);e.button("loading");setTimeout(function(){e.button("reset")},3e3)});jQuery(function(e){e("a").tooltip({html:true,container:"body"})});$(".btn-group [title]").tooltip({container:"body"})
+           $('.listen_click').on('click',function(){$('.target-status').toggleClass('fa fa-arrow-down fa fa-arrow-up');});
+           $('.listen_menu').on('click',function(){$(this).toggleClass('fa fa-align-justify fa fa-list');});
+        });
+
+        
+            
+
+

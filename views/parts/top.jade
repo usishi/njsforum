@@ -1,0 +1,159 @@
+.social-top
+          .pull-right.ikonlar.ikonlar1.sosyal
+
+        header.header(role='banner')
+            .topArea
+                .leftArea
+                  .logo-transition
+                    a.logo(href='/', title='')
+                      span NJS
+                      | FORUM
+                  p.site-info
+                    | Njs Forum
+                    i.fa.fa-umbrella
+                .clearfix
+                nav.mainnav(role='navigation', aria-label='Primary')
+                    ul
+                        li.nav-icon
+                          a(href='/')
+                            | Anasayfa 
+                            span.has-sub
+                              i.fa.fa-home
+                        li.nav-icon.menu1
+                          a(href='/pg/login')
+                            | Giriş 
+                            span.has-sub
+                              i.fa.fa-sign-in    
+                        li.nav-icon.menu2
+                          a(href='/pg/register')
+                            | Kayıt 
+                            span.has-sub
+                              i.fa.fa-thumbs-up
+                          li.nav-icon.menu
+                        li.nav-icon.menu3
+                          
+                    div.navBtn
+                        span MENU
+                        a.listen_menu.fa.fa-align-justify(data-toggle='collapse', data-target='.nav-collapse', href='javascript:void(0);', title='')
+                        a.fa.fa-sign-in(href='pg/login', title='')
+                .nav-collapse.collapse.flexnav-show
+                  nav.hidden-lg.hidden-md.hidden-sm
+                      ul.flexnav.list-unstyled
+                        li
+                          a(href='/')
+                            i
+                            |  Anasayfa
+                         li
+                          a(href='/pg/login')
+                            i
+                            |   Forum   
+                        li.menu2
+                          a(href='/pg/login')
+                            i
+                            |   Login   
+                        li.menu1
+                          a(href='/pg/register')
+                            i.fa.fa-group
+                            |  Kayit
+                        li
+                          a(href='/pg/arama')
+                            i.fa.fa-search
+                            |  Arama
+                         li.menu
+block js 
+  script(type="text/javascript").
+    var session; 
+    var user_name;   
+    $(document).ready(function(){        
+        session     ='!{user}';
+        $('.menu3').html("");
+        if(session !=""){ 
+          console.log(session);
+          var aydi = JSON.parse(session)._id;
+          if((JSON.parse(session).user_name) == undefined)
+            user_name = JSON.parse(session).email
+          else
+            user_name = JSON.parse(session).user_name
+          
+          if(JSON.parse(session)._id !=""){}
+            var say =JSON.parse(session)._id;
+            $('.sosyal').append('<a href="" class="kname" id="'+JSON.parse(session)._id+'">'+user_name+'</a><a href="javascript:cikis()" class="logout"></a>');
+            $('.menu1').html("");
+            $('.menu2').html("");
+            $('.menu').html("").append('<a href="/pg/profil" data-original-title="" title="">Profil</a>');
+            bildiri(say);
+            msj_cevap(say);
+            mesajKutusu();
+            if(JSON.parse(session).role[0].permission ==0)
+              $('.menu3').html("").append('<a href="/adm/dashboard" data-original-title="" title="">Yönetim Paneli</a>');    
+        }    
+    });
+    function cikis(){
+      var aydi = JSON.parse(session)._id;
+      postData('/ajax/logout',{id :aydi},function(retVal){
+        window.location="/pg/index";
+      });
+    }
+    function bildiri(deger){
+      $('.ikonlar').html();
+      postData('/ajax/bildiriSayisi',{id:deger},function(veri){
+          if(veri >= 0){
+               $('.ikonlar').append('<div class="bildiri3" style="position:relative; display:inline-block;"><a class="circle bildiri2" href="javascript:bildirim_pop_up();"  style="position:relative;   height: 36px; "> Bildiriler &nbsp;'+veri+'</a> <div class="uyaris gstr"></div></div> ');
+             }else{
+               $('.ikonlar').hide();
+          }      
+      })
+    }
+    function msj_cevap(params){
+        var dizi=[],sayac=0;
+          $(".alintiListesi").html();
+          $('.ikonlar1').html();
+          postData('/ajax/alintiBul',{model:'alinti',id:params},function(veri){
+              veri.forEach(function(sonuc){ 
+                 console.log(sonuc);
+                      sayac++;
+                      if(sonuc.durum==true){
+                          dizi.push(sonuc);                          
+                      }
+                      if(veri.length==sayac){
+                          $('.ikonlar1').append('<div class="alinties"><a class="circle gosterAlinti" href="/pg/alert/'+params+'/b2" style="position:relative;"> Yorumdan Alinti &nbsp;'+dizi.length+'</a><div  class="uyaris1 gstr ">ssss</div></div>');
+                      }                     
+              });
+          });
+    }
+    function bildirim_pop_up(param1){ 
+    
+      $('.uyaris').html("");
+      if($('.uyaris').hasClass('gstr')){
+         $('.uyaris').removeClass('gstr'); 
+         $('.uyaris').addClass('gstr1'); 
+      }else{
+         $('.uyaris').removeClass('gstr1'); 
+         $('.uyaris').addClass('gstr');
+      }
+      var sayac=0;
+      var ayId=JSON.parse(session)._id
+      postData('/ajax/bildirimEposta',{bilgi:'liste',id:ayId},function(veri){  
+        console.log(veri);
+        veri.forEach(function(yaz){
+          var veri2=yaz.reverse();
+          console.log(veri2); 
+          for(var i=0; i<1; i++){
+            if(veri2[sayac].durum==true){
+              $('.uyaris').append('<li><a  onclick="bildirimChange(\''+veri2[i]._id+'\')" href="/pg/konudetay/'+veri2[i].konu_id+'">'+veri2[i].konu_baslik+'konusuna bildirim var</a></li>');
+           
+            }          
+             sayac++;
+          }         
+        });
+      });
+    }
+    function bildirimChange(ID){
+      postData('/ajax/bildirimUpdate',{model:'bildiri',id:ID},function(veri){
+        //console.log("deneme deneme");
+      });
+    }
+    function mesajKutusu(){
+      $('.ikonlar1').append('<a href="/pg/alert"><i class="fa fa-bell-o"></i></a><a href="/pg/inbox"><i class="fa fa-envelope-o"></i></a>');
+    }
+      

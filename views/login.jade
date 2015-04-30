@@ -1,0 +1,101 @@
+extends ./parts/_layout
+block content
+    include ./parts/top
+    section.subheader
+      .clearfix
+        .fxicon
+          i.fa.fa-cogs
+        ul.index-pos.pull-left
+          li.index-title
+            h1 Login 
+          li.index-sub 
+         .search-box.pull-right
+              form
+                    fieldset
+                      input#arama( type='text1', maxlength='128',onkeydown="return kd(event)", title='Arama', placeholder='Arama', value='')              
+    br
+    .well
+      .side-segment
+        h3 Login
+        form#login.form-horizontal(role='form', action='', method='post')
+          fieldset
+            .col-md-6
+              .well.no-padding
+                .form-group
+                  label(for='username') Kullanıcı Adı:
+                  .input-icon.left
+                    i.fa.fa-user
+                    input.form-control.input-sm(type='text', tabindex='1', name='username', value='', placeholder='Kullanıcı Adı')#kadi
+                .form-group
+                  label(for='password') Şifre:
+                  .input-icon.left
+                    i.fa.fa-key
+                    input.form-control.input-sm(type='password', tabindex='2', name='password', placeholder='Şifre')#sifre
+                .form-group
+                  button.btn.btn-block.btn-success.btn.btn-success(type='button',style="display:block;",onclick="check();") Giriş
+                a(href='/pg/hatirlatma', data-original-title='', title='') Şifremi Unuttum ?
+                a(href='/pg/register', style="margin-left:30px;",data-original-title='', title='') Yeni Kayit
+            br
+            .col-md-6
+              .well.no-padding
+                form#login-form.smart-form.client-form(action='/pg/dashboard')
+                  p(style="font-size:20px; font-weight:bold;") Kolay Kimlik İle Oturum Aç
+                  fieldset
+                    sectionit
+                      .col-lg-6
+                        label
+                          img(src='/static/img/logomini.png')
+                      .col-lg-6
+                        a.btn.btn-primary.btn-lg.pull-right(type='button',style="display:block;",onclick="kolaykimlik();") Giriş       
+    include ./parts/footer
+block js
+    script(type='text/javascript', src='/static/js/usishi.js')
+    script(type="text/javascript").
+
+      function check(){
+            postData('/ajax/kbul',{model:'user',user_name:getOValue('kadi'),password:getOValue('sifre')},function(retVal){
+               console.log(retVal.status);
+               if(retVal.status== "hata"){
+                 uyari("Lütfen Eposta Gönderilen Aktivasyon Kodunuzu Doğrulayınız..");
+               }else if(retVal.status== "hata1"){ 
+                    uyari("Bu kullanıcı Kayıtlı Değildir.");
+                    //window.location="/pg/register";
+                }else if(retVal.status == true){
+                   window.location="/";
+                }else{
+                  uyari("K{ullanıcı adi ve sifrenizi kontrol edin..");
+                }
+                
+            });  
+      }
+      function kolaykimlik(){
+          window.location.href='/pg/kolaykimlik'
+      }
+      function uyari(params){   
+           $.smallBox({
+                  position:1,
+                  title: "Hata !!",
+                  content: params,
+                  icon: "/static/js/alert/static/img/invite-50.png",
+                  color: "#ba007c",
+                  timeout: 5000
+            });        
+      }
+      function kd(e)
+      {
+              var intKey = (window.Event) ? e.which : e.keyCode;
+              if (intKey == 13) { 
+                  var deger=document.getElementById("arama").value;
+                   arama(deger);              
+                  return false;
+              }
+              return true;
+      }  
+      function arama(params){
+            if(params.length > 2){
+              window.location ="/pg/search/"+params;
+            }else{
+              mesaj_gonder('Arama','Lütfen Arama kısmına en az üç harfli kelime girin.','#660000')
+            }
+      }
+

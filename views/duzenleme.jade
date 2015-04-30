@@ -1,0 +1,108 @@
+extends ./parts/_layout
+block content
+        include ./parts/top
+        section.subheader
+          .clearfix
+            .fxicon
+              i.fa.fa-home  
+            ul.index-pos.pull-left
+              li.index-title
+                h1 Duzenleme            
+              li.index-sub Burasi Anasayfa sayfa     
+            .search-box.pull-right
+              form#search(action='', method='', role='search')
+                fieldset
+                  input#keywords(name='keywords', type='text', maxlength='128', title='Search for keywords', placeholder='Arama', value='')
+        .clearfix
+         .yorum
+            .row 
+                #wid-id-0.jarviswidget.jarviswidget-color-blue(data-widget-colorbutton='false', data-widget-editbutton='false', data-widget-togglebutton='false', data-widget-fullscreenbutton='false', data-widget-sortable='false')
+            .row(style="margin:1px 15px 0 15px! important;")
+                .jarviswidget-editbox
+                .widget-body.no-padding.click2edit
+                  .summernote
+                  .smart-form(style="margin-top:10px;")
+                    .btn-group
+                      button.btn.btn-sm.btn-primary(type='button',onclick="duzeltKapat()",style="margin-right:10px;")
+                        i.fa.fa-times
+                        |  Kapat
+                    .btn-group
+                      button.btn.btn-sm.btn-success(type='button',onclick="duzeltme();")
+                        i.fa.fa-check
+                        |  Kaydet
+        a#totop.topstyle(href="#",onclick="return false;",style="",data-original-title="",title="")
+          i.fa.fa-chevron-up
+        include ./parts/footer
+block js 
+    script(src='/static/js/plugins/summernote/summernote.min.js')
+    script(src='/static/js/plugins/markdown/markdown.min.js')
+    script(src='/static/js/plugins/markdown/to-markdown.min.js')
+    script(src='/static/js/plugins/markdown/bootstrap-markdown.min.js')
+    script.
+      var aydi="",model=""; 
+      $(document).ready(function(){
+           aydi    ="!{param1}";
+           model   ="!{param}";
+           session ='!{user}';
+       
+           if(session==""){
+              window.location="/";
+            }else{
+                degistir();
+                $('.summernote').summernote({
+                        height : 400,
+                        focus : false,
+                        tabsize : 2
+                });
+                $("#mymarkdown").markdown({
+                        autofocus:false,
+                        savable:true
+                });
+            }
+      })
+      function degistir(){
+        console.log(model);
+        console.log(aydi);
+          postData('/ajax/findSome',{model:model,id:aydi},function(veri){
+           if(model  == "konu"){
+              //var res = veri.icerik.replace(/^"*|"*$/g, "");
+              var res = veri.icerik.replace(/\"/g, "");
+              var veri2       =  (res.replace(/\\/g, ''));
+              $('.note-editable').html('').append(veri2);
+           }else{
+               var res = veri.yorum.replace(/^"*|"*$/g, "");
+               $('.note-editable').html('').append(res);
+           }
+          });
+      }
+      function duzeltme(){
+            var tarihsaat=new Date();
+            var dtarih =tarihsaat.toLocaleString();
+            if(model =="konu"){
+                var kayit = {
+                            bolum           :model,
+                             id             :aydi,
+                            ekleme_zamani   :dtarih,
+                            icerik           :JSON.stringify(($('.note-editable.custom-scroll').code())),
+                            ekleyen         :{"name":JSON.parse(session).user_name,"id":JSON.parse(session)._id},
+                            schema          :model,
+                          }
+            }else{
+              var kayit = {
+                            bolum           :model,
+                             id             :aydi,
+                            ekleme_zamani   :dtarih,
+                            yorum           :JSON.stringify(($('.note-editable.custom-scroll').code())),
+                            ekleyen         :{"name":JSON.parse(session).user_name,"id":JSON.parse(session)._id},
+                            schema          :model,
+                          }
+            
+          } 
+            postData('/ajax/duzeltme',{bilgi:kayit},function(retVal){
+                       console.log(retVal);
+                        window.history.back();
+              });            
+      }
+      function duzeltKapat(){
+        window.history.back();
+      }

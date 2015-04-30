@@ -1,0 +1,177 @@
+extends _layout1
+block pagecontent
+    body.skin-blue
+      include ./parts/top
+      div.wrapper.row-offcanvas.row-offcanvas-left
+            include ./parts/menu
+            aside.right-side
+              section.content-header
+                h1  Kullanıcı İşlemleri
+                  small            
+                ol.breadcrumb
+                  li
+                    a(href='#')
+                      i.fa.fa-dashboard
+                      |  Haftalık
+                  |                         
+                  li.active İçerik Ekle
+              section.content
+                .row
+                  .col-md-11
+                    #loading-example.box.box-danger
+                      .box-header
+                        // tools box
+                        .pull-right.box-tools
+                          button.btn.btn-danger.btn-sm(data-widget='collapse', data-toggle='tooltip', title='Collapse')
+                            i.fa.fa-minus
+                        // /. tools
+                        i.fa.fa-cloud
+                        h3.box-title Kullanıcı Listesi
+                        br
+                        br
+                        br
+                        .box-body.table-responsive
+                          table#example1.table.table-bordered.table-striped
+                            thead
+                              tr
+                                th Resim
+                                th Adı
+                                th Soyadı
+                                th Email
+                                th Cinsiyet
+                                th Role
+                                th Doğum Tarihi 
+                                th Rütbe
+                                th Ban
+                                th #
+                            tbody.us
+                            tfoot
+                              tr
+                                th Resim
+                                th Adı
+                                th Soyadı
+                                th Email
+                                th Cinsiyet
+                                th Role
+                                th Doğum Tarihi 
+                                th Rütbe
+                                th Ban
+                                th #
+                        // /.box-body
+
+
+  block scripts 
+    script(src="/static/js/admin/plugins/datatables/jquery.dataTables.js" type="text/javascript")
+    script(src="/static/js/admin/plugins/datatables/dataTables.bootstrap.js" type="text/javascript")
+    script(type="text/javascript").
+      $(document).ready(function(){
+        getList();
+      });
+      function getList(){
+        postData('/ajax/getList',{model_list:["user","role"]},function(retVal){
+          var us=0;
+          var roller=usencode(JSON.stringify(retVal.role));
+          $('.us').html("");
+          retVal.user.forEach(function(kayit){
+            us++;
+            var user=usencode(JSON.stringify(kayit));
+            var resim=kayit.picture==''?'/static/img/photo.jpeg':'/getimg/'+kayit.picture+'.jpeg';
+            $('.us').append("<tr><td><img width='30' height='30' src='"+resim+"'></td>"+
+                                              "<td ><a href='javascript:pop_up(\""+kayit._id+"\",\"name\")'>"+kayit.name+"</a></td>"+
+                                              "<td ><a href='javascript:pop_up(\""+kayit._id+"\",\"surname\")'>"+kayit.surname+"</a></td>"+
+                                              "<td ><a href='javascript:pop_up(\""+kayit._id+"\",\"email\")'>"+kayit.email+"</a></td>"+
+                                              "<td ><a href='javascript:pop_up(\""+kayit._id+"\",\"cinsiyet\")'>"+kayit.cinsiyet+"</a></td>"+
+                                              "<td ><select onchange='javascript:update_role(\""+kayit._id+"\",\""+roller+"\");' id="+kayit._id+" class='form-control'></select></td>"+
+                                              "<td>-</td>"+
+                                              "<td>-</td>"+
+                                              "<td><a href='javascript:ban(\""+user+"\")'>Ekle/Çıkar</a></td>"+
+                                              "<td><a href='javascript:sil(\""+kayit._id+"\",\"user\",\"getList\")'><span class='glyphicon glyphicon-trash' aria-hidden='true'></span></a></td></tr>")
+            $('#'+kayit._id).append('<option disabled selected>Rol Seçiniz</option>');
+            retVal.role.forEach(function(record){
+              if(kayit.role.length>0){
+                if(kayit.role[0].id==record._id)
+                  $('#'+kayit._id).append('<option selected id='+record._id+'>'+record.role_name+'</option>');
+                else 
+                  $('#'+kayit._id).append('<option id='+record._id+'>'+record.role_name+'</option>');
+              }
+              else
+                $('#'+kayit._id).append('<option id='+record._id+'>'+record.role_name+'</option>');
+            });
+            if(us==retVal.user.length)
+              $('#example1').dataTable();
+          });
+        });
+      }
+      function ban(data){
+        var user=JSON.parse(usdecode(data));
+        //console.log(user);
+        $('#genel').modal();
+        $('#genel .modal-title').html('').append('<b>Ban Listesi</b>');
+        $('#genel .modal-body').html('').append('<div id="ban_list"></div>');
+        $('#genel .modal-footer').html('').append('<a href="javascript:update_alan(\''+user._id+'\')" class="btn btn-primary">Güncelle</a>');
+        ////////////////////konu eklenebilecek kısımlar listeye eklenecek////////////
+        postData('/ajax/getList',{model_list:["kategori"]},function(retVal){
+          var us=0,status;
+          retVal.kategori.forEach(function(kayit){
+            us++;
+            if(kayit.children.length>0 && kayit.parent.id=="")
+              find_children(kayit);
+            else if(kayit.parent.id==""){
+              status=user.ban.indexOf(kayit._id)>-1?"checked":"";
+              $("#ban_list").append('<input id='+kayit._id+'  onclick="javascript:checkbox_change(\''+kayit._id+'\')" type="checkbox"  '+status+' >'+kayit.kategori_adi);
+            }
+            function find_children(cocuk){
+              cocuk.children.forEach(function(deger){
+                retVal.kategori.forEach(function(record){
+                  if(deger.id==record._id){
+                    if(record.children.length>0)
+                      find_children(record);
+                    else{
+                      status=user.ban.indexOf(record._id)>-1 ? "checked":" ";
+                      $("#ban_list").append('<input id='+record._id+'  onclick="javascript:checkbox_change(\''+record._id+'\')" type="checkbox"  '+status+' >'+record.kategori_adi);
+                    }
+                  }
+                });
+              });
+            }
+          });
+        });
+        ////////////////////////////////////////////////////////////////////////////////////////
+      }
+      function pop_up(id,alan){
+        $('#genel').modal();
+        $('#genel .modal-title').html('').append('<b>Yeni Değer</b>');
+        $('#genel .modal-body').html('').append('<input id="new_value" class="form-control" type="text" placeholder="Yeni Değeri Giriniz">');
+        $('#genel .modal-footer').html('').append('<a href="javascript:update_alan(\''+id+'\',\''+alan+'\',\'user\',\'getList\')" class="btn btn-primary">Güncelle</a>');
+      }
+      function update_role(id,roller){
+        var roles=JSON.parse(usdecode(roller)),role;
+        roles.forEach(function(kayit){
+          if(kayit._id==$('#'+id+' option:selected').attr("id"))
+            role={"role_name":kayit.role_name,"permission":kayit.permission,"id":kayit._id};
+        });
+        postData('/ajax/user_role_update',{model:"user",alan:"role",id:id,yeni_deger:role},function(retVal){
+          if(retVal.status=="1")
+            mesaj_gonder("GÜNCELLEME","Rol Güncelleme işlemi başarı ile tamamlanmıştır","green");
+          else 
+            mesaj_gonder("HATA",retval.status,"red");
+        });
+      }
+      function  update_alan(users){        
+          var eleman=[];
+          $("#ban_list input:checked").each(
+            function(){
+             eleman.push($(this).attr("id"));
+          })
+          postData('/ajax/user_ban_update',{model:"user",id:users,yeni_deger:eleman},function(retVal){
+            if(retVal.status=="1")
+              mesaj_gonder("GÜNCELLEME","Ban Güncelleme işlemi başarı ile tamamlanmıştır","green");
+            else 
+              window.location="/adm/user"
+          });
+      }
+
+
+            
+
+   

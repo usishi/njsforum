@@ -1,0 +1,250 @@
+extends ./parts/_layout
+block content
+		include  ./parts/top
+		br
+		.well.tasarim
+			.col-xs-3				 
+				
+				a.btn.btn-primary.email_link(href="javascript:bildirim();")   Bildirim   
+					span.badge.icon(style="float:right;")  0			
+				a.btn.btn-primary.email_link(href="javascript:konular();")	  Konular
+					span.badge.icon1(style="float:right;") 0
+				a.btn.btn-primary.email_link(href="javascript:yorumlar();") Yorumlar
+					span.badge.yorum(style="float:right;")  0
+				a.btn.btn-primary.email_link(href="javascript:alintilar();")  Alintilar (Mesaja Cevap)
+					span.badge.cvpmsj(style="float:right;")  0 				
+			.col-xs-9
+				.getListe
+			div(style="clear:both;")
+			#popup1(style='display: none; width: 650px; height: 400px; overflow: auto')
+				div(rel='title')
+					| Göster
+					div(rel='body')
+						div(style='padding: 10; font-size: 11px; line-height: 150%;')
+							
+							div(style='float:left; background-color:white; font-size:13px;  line-height:26px; border: 1px solid silver; margin:5px;')
+							div.titles(style=' background-color:white; font-size:13px;  line-height:26px;  margin:5px;')
+							div.icerik(style='float:left; background-color:white; font-size:13px;  line-height:26px; min-height:360px; width:100%; border: 1px solid silver; margin:5px;')		
+		include  ./parts/footer
+block js	
+	script(src="/static/js/plugins/datatables/jquery.dataTables.min.js")
+	script(src="/static/js/plugins/datatables/dataTables.colVis.min.js")
+	script(src="/static/js/plugins/datatables/dataTables.tableTools.min.js")
+	script(src="/static/js/plugins/datatables/dataTables.bootstrap.min.js")
+	script(type="text/javascript").
+		var user1;
+		$(document).ready(function(){
+			user1 		='!{user}';
+			var uyari   ='!{param1}';
+			var deger 	='{!param}';
+			
+			$('#getYorumlar').DataTable();
+			$('#getalinti').DataTable();
+			$('#getKonus').DataTable();
+			$('#getbildirim').DataTable();
+			if(uyari =='b1'){
+				bildirim();
+				$('.col-xs-3 > a').removeClass('active');
+				$('.col-xs-3 > a').eq('2').addClass('active');
+			}else if(uyari=='b2'){
+				alintilar();
+				$('.col-xs-3 > a').removeClass('active');
+				$('.col-xs-3 > a').eq('5').addClass('active');
+			}else{
+				bildirim();
+			}
+			$('.btn').click(function(){
+				var numbers = $(this).index();
+				$('.col-xs-3 > a').removeClass('active');
+				$('.col-xs-3 > a').eq(numbers).addClass('active');
+			});		    
+		});
+		function konular(){
+			var deger = JSON.parse(user1)._id,konu_sayisi=0;
+			$('.icon1').html('');
+			$('.getListe').html("").append('<div class="jarviswidget jarviswidget-color-darken" style="width:100%; diplay:block;" id="wid-id-0" data-widget-editbutton="false"><header>'+
+						'<span class="widget-icon"> <i class="fa fa-table"></i> </span>	<h2>Konular </h2></header><div class="widget-body no-padding"style="width:100%; diplay:block; margin:0px 0px !important;" ><table id="getKonus" class="table table-striped table-bordered table-hover dataTable " cellspacing="0"  width="100%"><thead><tr><th>#</th><th> Konular </th><th>İçerik</th><th>#</th></tr></thead><tbody class="getkonus"></tbody></table></div></div>');
+			postData('/ajax/konuidBul',{model:'konu',ekleyen_id:deger},function(retVal){
+				var i;
+				var j=0;
+				console.log(retVal);
+				for(i=0;i<retVal.length;++i){
+				  ++j;
+				  $('.getkonus').append("<tr><td>"+j+"</td>"+
+									"<td><a href='/pg/konudetay/"+retVal[i]._id+"'>"+retVal[i].konu_baslik+"</a></td><td></td><td><a href='/pg/duzenlme/konu/"+retVal[i]._id+"'><span class='glyphicon-class glyphicon glyphicon-pencil'></span></a>&nbsp;&nbsp;<a href='javascript:kaldir(\""+retVal[i]._id+"\",\"konu\")'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></a></td></tr>");
+				  ++konu_sayisi;
+				}
+				if(konu_sayisi !=0){
+					$('.icon1').append(konu_sayisi);
+				}
+				else
+				{
+					$('.icon1').append("0");
+				}
+				console.log(retVal.length);
+				if(konu_sayisi == retVal.length-1){
+							$('#getkonus').dataTable({"sDom": "<'dt-toolbar'<'col-xs-6'f><'col-xs-6'C>r>t<'dt-toolbar-footer'<'col-xs-6'i><'col-xs-6'p>>"});
+							$.fn.dataTableExt.sErrMode = 'throw';
+				}
+			});
+		}
+		
+		function yorumlar(){
+			var yorum_sayisi=0,adet=0;
+			var deger = JSON.parse(user1)._id;
+			$('.getListe').html("").append('<div class="jarviswidget jarviswidget-color-darken" style="width:100%; diplay:block;" id="wid-id-0" data-widget-editbutton="false"><header>'+
+						'<span class="widget-icon"> <i class="fa fa-table"></i> </span>	<h2>Yorumlar </h2></header><div class="widget-body no-padding"style="width:100%; diplay:block; margin:0px 0px !important;" ><table id="getYorumlar" class="table table-striped table-bordered table-hover dataTable " cellspacing="0"  width="100%"><thead><tr><th>Sira</th><th>Konu</th><th>İçerik</th><th>#</th></tr></thead><tbody class="yorum1"></tbody></table></div></div>');
+			postData('/ajax/getList',{model_list:["konu"]},function(retVal){
+				postData('/ajax/getList',{model_list:["yorum"]},function(retVal2){
+					retVal.konu.forEach(function(kayit){
+						retVal2.yorum.forEach(function(kayit2){
+							if(kayit._id==kayit2.konu_id && kayit2.ekleyen.id==deger){
+								adet++;
+								 var veri       = (kayit2.yorum.replace(/\"/g, ""));
+								 var veri1      = (veri.replace("undefined", ""));
+								 var veri2       =  (veri1.replace(/\\/g, ''));  
+								$('.yorum1').append("<tr><td>"+adet+"</td><td><a href='/pg/konudetay/"+kayit._id+"'>"+kayit.konu_baslik+"</a></td>"+
+								"<td><a href='javascript:pop_up(\""+kayit2._id+"\",\"yorum\");'>Yorumu Göster</a></td><td><a href='javascript:kaldir(\""+kayit._id+"\",\"yorumlar\")'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></a></td></tr>");
+								++yorum_sayisi;
+							}            
+						}); 
+						if(yorum_sayisi!=0){
+							$('.yorum').html('').append(yorum_sayisi);
+						}else{
+							$('.yorum').html('').append("0");
+						}
+						console.log( retVal2.yorum.length);
+						if(yorum_sayisi == retVal2.yorum.length-1){
+							$('#getYorumlar').dataTable({"sDom": "<'dt-toolbar'<'col-xs-6'f><'col-xs-6'C>r>t<'dt-toolbar-footer'<'col-xs-6'i><'col-xs-6'p>>"});
+							$.fn.dataTableExt.sErrMode = 'throw';
+						}			  
+					});
+				});
+			});
+		}
+		function bildirim(){
+			var deger = JSON.parse(user1)._id;
+			$('.bildirim').html('');
+			var sayac = 0 ,adet,okuyucu;
+			bildirimAdet();
+			$('.getListe').html("").append('<div class="jarviswidget jarviswidget-color-darken" style="width:100%; diplay:block;" id="wid-id-0" data-widget-editbutton="false"><header>'+
+						'<span class="widget-icon"> <i class="fa fa-table"></i> </span>	<h2>Bildirim </h2></header><div class="widget-body no-padding"style="width:100%; diplay:block; margin:0px 0px !important;" ><table id="getbildirim" class="table table-striped table-bordered table-hover dataTable " cellspacing="0"  width="100%"><thead><tr><th>Bildirim</th><th> Konu</th><th>Durum</th><th>#</th><th>#</th></tr></thead><tbody class="bildirim"></tbody></table></div></div>');
+			postData('/ajax/bildirimEposta',{bilgi:'liste',id:deger},function(veri){  
+				veri.forEach(function(yaz){
+					var veri2=yaz.reverse(); 
+					for(var i=0; i<1; i++){
+						if(veri2[sayac].durum==true){
+							okuyucu="Okunmadi";
+						}else{
+							okuyucu="Okundu";
+						}
+						$('.bildirim').append("<tr><td>"+sayac+"</td><td><a onclick='bildirimChange(\""+veri2[i]._id+"\")' href='/pg/konudetay/"+veri2[i].konu_id+"'>"+veri2[i].konu_baslik+"</a></td><td><a href='/pg/profil/"+veri2[i].bildiri_yapan.id+"'>"+veri2[i].bildiri_yapan.name+"</a></td><td><a onclick='bildirimChange(\""+veri2[i]._id+"\",\"bildirim\")' href='/pg/konudetay/"+veri2[i].konu_id+"'> <span style='color:red;font-size:14px;'>"+okuyucu+"</span></a></td><td><a href='Javascript:kaldir(\""+veri2[i]._id+"\",\"bildirim\");'><span class='glyphicon glyphicon-remove' aria-hidden='true'></span></a></td></tr>");
+						sayac++;
+					} 
+				  if(sayac == veri.length){
+						$('#getbildirim').dataTable({"sDom": "<'dt-toolbar'<'col-xs-6'f><'col-xs-6'C>r>t<'dt-toolbar-footer'<'col-xs-6'i><'col-xs-6'p>>"});
+						$.fn.dataTableExt.sErrMode = 'throw';
+				  }        
+				});
+			});
+		}		
+		function bildirimAdet(){
+			var deger = JSON.parse(user1)._id;
+			$('.icon').html("");
+			postData('/ajax/bildiriSayisi',{id:deger},function(veri){ 
+				if(veri >= 0){
+					$('.icon').append(veri);
+				}else{
+					$('.icon').hide();
+				}            
+			});
+		}
+		function bildirimChange(ID){
+			postData('/ajax/bildirimUpdate',{model:'bildiri',id:ID},function(veri){
+			  //console.log("deneme deneme");
+			});
+		}
+		function alintilar(){
+			var deger =JSON.parse(user1)._id,okuyucu;
+			var dizi=[],sayac=0;
+			$(".alintiListesi").html();
+			$('.cvpmsj').html("");
+			$('.getListe').html("").append('<div class="jarviswidget jarviswidget-color-darken" style="width:100%; diplay:block;" id="wid-id-0" data-widget-editbutton="false"><header>'+
+						'<span class="widget-icon"> <i class="fa fa-table"></i> </span>	<h2>Yorumdan  Cevap  yaz</h2></header><div class="widget-body no-padding"style="width:100%; diplay:block; margin:0px 0px !important;" ><table id="getalinti" class="table table-striped table-bordered table-hover dataTable " cellspacing="0"  width="100%"><thead><tr><th>No</th><th>Konu</th><th>İçerik</th><th>Durum</th><th>#</th></tr></thead><tbody class="alintiListesi"></tbody></table></div></div>');  
+			postData('/ajax/alintiBul',{model:'alinti',id:deger},function(veri){
+				console.log(veri);
+				veri.forEach(function(sonuc){ 
+					for(var i=0; i<1; i++){
+						if(veri[sayac].durum==true){
+							okuyucu="Okunmadi";
+						}else{
+							okuyucu="Okundu";
+						}
+						
+						$(".alintiListesi").append('<tr><td>'+sayac+'</td><td><a href="javascript:alintiGuncelleme(\''+sonuc._id+'\',\''+sonuc.konu_id+'\')" > Konu git</a></td><td> <a  href="/pg/profil/'+sonuc.ekleyen_kisi.id+'">'+sonuc.ekleyen_kisi.name+'</a></td><td><span style="color:red; font-weight:bold; font-size:12px;">'+okuyucu+'</span></td><td><a href="javascript:kaldir(\''+sonuc._id+'\',\'alinti\')"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></td></tr>');
+						sayac++;
+					 }
+					if(sonuc.durum==true){
+						dizi.push(sonuc);                          
+					}
+					
+					if(veri.length==sayac){
+						//$('.cvpmsj').append(dizi.length);
+						$('#getalinti').dataTable({"sDom": "<'dt-toolbar'<'col-xs-6'f><'col-xs-6'C>r>t<'dt-toolbar-footer'<'col-xs-6'i><'col-xs-6'p>>"});
+						$.fn.dataTableExt.sErrMode = 'throw';
+					}                      
+				});
+			});
+		}
+		function alintiGuncelleme(ts,konu){
+			postData('/ajax/bildirimUpdate',{model:'alinti',id:ts},function(cvp){
+				console.log();
+			});
+		}
+		function kaldir(aydi,param){
+			onay_kutu(param+'&nbsp;  Silme','Silmeyi  Düşünüyor musunuz ?',function(retVal){
+				if(retVal==true){ 
+					postData('/ajax/silme',{model:param,id:aydi},function(sonuc){
+						if(sonuc== true){
+							mesaj_gonder('Okey','Silme işlemi Tamamlandı','#E808F8');
+							window.location.href="/";
+						}
+					});
+				}
+			})
+		}
+		function pop_up(aydi,mod){
+			if(mod == 'mesaj'){
+				postData('/ajax/findSome',{model:'mesaj',id:aydi},function(veri){
+						console.log(veri);
+					   
+						$('.titles').html("").append(veri.title);
+						$('.icerik').html("").append(veri.mesaj_icerik);
+						$('#popup1').w2popup();				
+				});	
+			}else if(mod =='yorum'){
+					postData('/ajax/findSome',{model:'yorum',id:aydi},function(kayit){
+					
+						var veri1      = (kayit.yorum.replace("undefined", ""));
+						var veri2       =  (veri1.replace(/\\/g, ''));
+						var veri3 =veri2.substring(1);
+						var veri4=veri3.substring(0,veri3.length-1);
+						$('.titles').html("").append("YORUMLAR");
+						$('.icerik').html("").append(veri4);
+						$('#popup1').w2popup();				
+					});	
+			}else if(mod =="sender"){
+				postData('/ajax/findSome',{model:'mesaj',id:aydi},function(veri1){
+									  
+						$('.titles').html("").append(veri1.title);
+						$('.icerik').html("").append(veri1.mesaj_icerik);
+						$('#popup1').w2popup();				
+					});	
+			}			
+		}
+
+  
+  
+
+
+	

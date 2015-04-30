@@ -1,0 +1,27 @@
+extends ./parts/_layout
+block content
+        include ./parts/top
+       
+        section.subheader
+          .clearfix
+            .fxicon
+              i.fa.fa-home  
+            ul.index-pos.pull-left
+              li.index-title
+                h1 Anasayfa            
+              li.index-sub Burasi Anasayfa sayfa     
+            .search-box.pull-right
+              form#search(action='', method='', role='search')
+                fieldset
+                  input#keywords(name='keywords', type='text', maxlength='128', title='Search for keywords', placeholder='Arama', value='')
+        include ./parts/main
+        include ./parts/footer
+block js 
+    script(type="text/javascript").
+      $(document).ready(function(){
+         window.location="/";
+        
+      });
+
+
+       

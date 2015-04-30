@@ -1,0 +1,150 @@
+extends _layout1
+block pagecontent
+    body.skin-blue
+      include ./parts/top
+      div.wrapper.row-offcanvas.row-offcanvas-left
+            include ./parts/menu
+            aside.right-side
+              section.content-header
+                h1  Kullanıcı İşlemleri
+                  small            
+                ol.breadcrumb
+                  li
+                    a(href='#')
+                      i.fa.fa-dashboard
+                      |  Haftalık
+                  |                         
+                  li.active İçerik Ekle
+              section.content
+                .row
+                  .col-md-11
+                    #loading-example.box.box-danger
+                      .box-header
+                        // tools box
+                        .pull-right.box-tools
+                          button.btn.btn-danger.btn-sm(data-widget='collapse', data-toggle='tooltip', title='Collapse')
+                            i.fa.fa-minus
+                        // /. tools
+                        i.fa.fa-cloud
+                        h3.box-title Kullanıcı Listesi
+                        br
+                        br
+                        br
+                        .box-body.table-responsive
+                          table#example1.table.table-bordered.table-striped
+                            thead
+                              tr
+                                th Konu Başlığı
+                                th İçerik
+                                th Ekleyen Kişi
+                                th Kategori
+                                th Görüntülenme Sayısı
+                                th Tarih
+                                th #
+                            tbody.us
+                            tfoot
+                              tr
+                                th Konu Başlığı
+                                th İçerik
+                                th Ekleyen Kişi
+                                th Kategori
+                                th Görüntülenme Sayısı
+                                th Tarih
+                                th #
+                        // /.box-body
+
+
+  block scripts 
+    script(src="/static/js/admin/plugins/datatables/jquery.dataTables.js" type="text/javascript")
+    script(src="/static/js/admin/plugins/datatables/dataTables.bootstrap.js" type="text/javascript")
+    script(type="text/javascript").
+      $(document).ready(function(){
+        getList();
+      });
+      function getList(){
+        postData('/ajax/getList',{model_list:["konu","kategori"]},function(retVal){
+          var us=0,last_childs=[];
+          $('.us').html("");
+          //////////////////konu eklenebilecek olan kategorileri buluyor//////////////////////
+            retVal.kategori.forEach(function(kayit){
+              if(kayit.children.length>0 && kayit.parent.id=="")
+                find_children(kayit);
+              else if(kayit.parent.id=="")
+                last_childs.push({"id":kayit._id,"adi":kayit.kategori_adi});
+              function find_children(cocuk){
+                cocuk.children.forEach(function(deger){
+                  retVal.kategori.forEach(function(record){
+                    if(deger.id==record._id){
+                      if(record.children.length>0)
+                        find_children(record);
+                      else{
+                        last_childs.push({"id":record._id,"adi":record.kategori_adi});
+                      }
+                    }
+                  });
+                });
+              }
+            });
+          ///////////////////////////////////////////////////////////////////////////////////////////kategori bulma son 
+          retVal.konu.forEach(function(kayit){
+            us++;
+            var zaman=new Date();
+            var tarih=zaman.getDate(kayit.eklenme_tarihi)+" / "+zaman.getMonth(kayit.eklenme_tarihi)+" / "+zaman.getFullYear(kayit.eklenme_tarihi);
+            var icerik=usencode(kayit.icerik);
+            var show=kayit.show==true?'glyphicon glyphicon-eye-open':'glyphicon glyphicon-eye-close';
+            $('.us').append("<tr>"+
+                                  "<td>"+kayit.konu_baslik+"</td>"+
+                                  "<td><a href='javascript:icerik_goster(\""+icerik+"\");'>Tıklayınız</a></td>"+
+                                  "<td>"+kayit.ekleyen.name+"</td>"+
+                                  "<td><select onchange='javascript:update_kategori(\""+kayit._id+"\");' id="+kayit._id+" class='form-control'></select></td>"+
+                                  "<td>"+kayit.sayi+"</td>"+
+                                  "<td>"+tarih+"</td>"+
+                                  "<td>"+
+                                    "<a href='javascript:sil(\""+kayit._id+"\",\"konu\",\"getList\")' title='Sil'><span class='glyphicon glyphicon-trash' aria-hidden='true'></span></a>&nbsp;&nbsp;"+
+                                    "<a href='javascript:yayin_al_cikar(\""+kayit.show+"\",\""+kayit._id+"\")' title='Yayına Al / Çıkar'><span id="+kayit._id+" class='"+show+"' aria-hidden='true'></span></a>"+
+                                  "</td>"+
+                            "</tr>");
+            last_childs.forEach(function(option){
+              if(option.id==kayit.kategori_id)
+                $('#'+kayit._id).append('<option id='+option.id+' selected>'+option.adi+'</option>');
+              else
+                $('#'+kayit._id).append('<option id='+option.id+'>'+option.adi+'</option>');
+            });
+            if(us==retVal.konu.length)
+              $('#example1').dataTable();
+          });
+        });
+      }
+      function update_kategori(id){
+       console.log(id);
+       console.log();
+       console.log();
+        postData('/ajax/update_alan',{alan:"kategori_adi",yeni_deger:$("#"+id).val(),model:"konu",id:id},function(retVal){
+          if(retVal.status="1"){
+            postData('/ajax/update_alan',{alan:"kategori_id",yeni_deger:$("#"+id+" option:selected").attr("id"),model:"konu",id:id},function(retVal1){
+              if(retVal1.status=="1")
+                mesaj_gonder("GÜNCELLEME","Kategori Güncelleme İşlemi Başarılı Bir Şekilde Tamamlanmıştır","green");
+            });
+          }
+        });
+      }
+      function icerik_goster(icerik){
+        var icerik=usdecode(icerik);
+        $('#genel').modal();
+        $('#genel .modal-title').html('').append('<b>İçerik</b>');
+        $('#genel .modal-body').html('').append(icerik);
+        $('#genel .modal-footer').html('').append('');
+      }
+      function yayin_al_cikar(status,id){
+        console.log(status);
+        var last_status=status=="true"?false:true;
+        console.log(last_status);
+        postData('/ajax/update_alan',{yeni_deger:last_status,alan:"show",id:id,model:"konu"},function(retVal){
+          if(retVal.status=="1"){
+            mesaj_gonder("Güncelleme",last_status==true?"Yayına Alma İşlemi Tamamlanmıştır":"Yayından Çıkarma İşlemi Başarı İle Tamamlanmıştır","green");
+            getList();
+          }
+          else
+            mesaj_gonder("Hata",retVal.status,"red");
+        });
+      }
