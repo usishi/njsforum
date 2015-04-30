@@ -13,18 +13,26 @@ header.header
               a.dropdown-toggle(href='#', data-toggle='dropdown')
                 i.glyphicon.glyphicon-user                               
                 span.ekle User
+
+          ul.nav.navbar-nav
+            li.dropdown.user.user-menu
+              a#logout(href='#', onclick="logout();")
+                i.glyphicon.glyphicon-off                               
+                span.ekle Çıkış
+
+          
+
 block scripts
   script(type="text/javascript").
-    /*$(document).ready(function(){
+    function logout(){
       session ='!{user}';
-      if(JSON.parse(session)._id){
-        console.log("***********");
-        console.log(JSON.parse(session)._id);
-        var say =JSON.parse(session)._id;
-        $('ekle').append('<a href="" class="kname" style="font-size:500px" id="'+JSON.parse(session)._id+'">'+user_name+'</a><a href="javascript:cikis()" class="logout"></a>');
-      }
-    });*/
-
+      console.log(session);
+      var aydi = JSON.parse(session)._id;
+      postData('/ajax/logout',{id :aydi},function(retVal){
+        window.location="/pg/index";
+      });
+    };
+    
 
 
           
