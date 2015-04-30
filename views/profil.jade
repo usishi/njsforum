@@ -129,8 +129,7 @@ block js
     var getmonth = d.getMonth()+1;
     $('#nowdate').html('').append("<b>"+d.getDate()+"<b>/</b>"+getmonth+"<b>/</b>"+d.getFullYear()+"</b>");
     $(document).ready(function(){
-           alintilar();
-           bildirim();
+           
           $.dobPicker({
             daySelector: '#dobday', /* Required */
             monthSelector: '#dobmonth', /* Required */
@@ -153,10 +152,7 @@ block js
             window.location="/";
         }
         postData('/ajax/findSome',{model:"user",id:deger,kk_id: (JSON.parse(session).kk_id)},function(kayit){  
-              console.log("0000000000");
-              console.log(kayit);
               if(JSON.parse(session)._id == param){
-                c
                 $('.profils').show();                                             
                 $('#name').val(kayit.name);
                 $('#surname').val(kayit.surname);
