@@ -152,86 +152,89 @@ block js
         }else{
             window.location="/";
         }
-        postData('/ajax/findSome',{model:"user",id:deger},function(kayit){       ; 
-                    if(JSON.parse(session)._id == param){
-                      $('.profils').show();                                             
-                      $('#name').val(kayit.name);
-                      $('#surname').val(kayit.surname);
-                      $('#email').html('').append("<b>"+"<font size='4'>"+kayit.email+"</font>"+"</b>");
-                      $('#about').val(kayit.about);
-                        var uye =kayit.role[0].role_name =="caylak" ? "Normal Üye":"";
-                      $('#role').html('').append("<b>"+"<font size='4'>"+Üye+"</font>"+"</b>");
-                      $('#statusabout').html('').append(kayit.about);
-                      $('#date').html('').append("<b>"+"<font size='4'>"+kayit.day +"<b> / </b>"+kayit.month+"<b> / </b>"+kayit.year +"</font>"+"</b>");
-                      $('.profile-usertitle-name').html('').append(kayit.user_name + "<b> ");
-                      $('.profile-usertitle-job').html('').append(kayit.role);
-                       var resim=kayit.picture==""?"<button type='button' onclick='javascript:resim_ekle(\""+kayit._id+"\")' class='btn btn-info btn-sm'><i class='fa fa-x fa-plus-square'></i></button>":"<a href='javascript:resim_ekle(\""+kayit._id+"\")'><img class='resim_buyult' src='/getimg/"+kayit.picture+".jpeg'  style='width:160px;height:160px;'></a>";
-                     if(kayit.picture==""){
-                        $('#erka').attr("src","/static/img/photo.jpeg").attr("onclick","javascript:resim_ekle(\""+kayit._id+"\")");
-                     }
-                     else{
-                         //console.log("'/getimg/"+kayit.picture+".jpeg'");
-                        $('#erka').attr("src","/getimg/"+kayit.picture+".jpeg");
-                     } 
-                     if(JSON.parse(session).password=="")
-                     {
-                        $('#eskisifre').attr('disabled', true);
-                     }           
-                }else if(kayit._id == JSON.parse(session)._id){
-                     $('.profils').show();
-                     $('#name').val(kayit.name);
-                     $('#surname').val(kayit.surname);
-                     $('#email').html('').append("<b>"+"<font size='4'>"+kayit.email+"</font>"+"</b>");
-                     $('#about').val(kayit.about);
-                     var uye =kayit.role[0].role_name =="caylak" ? "Normal Üye":"";
-                     $('#role').html('').append("<b>"+"<font size='4'>"+uye+"</font>"+"</b>");
-                     $('#statusabout').html('').append(kayit.about);
-                     $('#date').html('').append("<b>"+"<font size='4'>"+kayit.day +"<b> / </b>"+kayit.month+"<b> / </b>"+kayit.year +"</font>"+"</b>");
-                     $('.profile-usertitle-name').html('').append(kayit.user_name + "<b> ");
-                     $('.profile-usertitle-job').html('').append(kayit.role);
-                     var resim=kayit.picture==""?"<button type='button' onclick='javascript:resim_ekle(\""+kayit._id+"\")' class='btn btn-info btn-sm'><i class='fa fa-x fa-plus-square'></i></button>":"<a href='javascript:resim_ekle(\""+kayit._id+"\")'><img class='resim_buyult' src='/getimg/"+kayit.picture+".jpeg'  style='width:160px;height:160px;'></a>";
-                       if(kayit.picture==""){
-                          $('#erka').attr("src","/static/img/photo.jpeg").attr("onclick","javascript:resim_ekle(\""+kayit._id+"\")");
-                       }
-                       else{
-                           console.log("'/getimg/"+kayit.picture+".jpeg'");
-                          $('#erka').attr("src","/getimg/"+kayit.picture+".jpeg").attr("onclick","javascript:resim_ekle(\""+kayit._id+"\")");
-                       }
-                     
-                       if(JSON.parse(session).password=="")
-                       {
-                          $('#eskisifre').attr('disabled', true);
-                       }
-                       if(kayit._id == JSON.parse(session)._id){
-                           $('.yenile').attr("onclick","javascript:resim_ekle(\""+kayit._id+"\")").attr("class","glyphicon glyphicon-pencil");
-                       }
-              }else if(kayit._id ==param){
-                      $('.profils').html('');  
-                      $('.profils').hide();                                               
-                      $('#name').val(kayit.name);
-                      $('#surname').val(kayit.surname);
-                      $('#email').html('').append("<b>"+"<font size='4'>"+kayit.email+"</font>"+"</b>");
-                      $('#about').val(kayit.about);
-                      var uye =kayit.role[0].role_name =="caylak" ? "Normal Üye":"";
-                      $('#role').html('').append("<b>"+"<font size='4'>"+uye+"</font>"+"</b>");
-                      $('#statusabout').html('').append(kayit.about);
-                      $('#date').html('').append("<b>"+"<font size='4'>"+kayit.day +"<b> / </b>"+kayit.month+"<b> / </b>"+kayit.year +"</font>"+"</b>");
-                      $('.profile-usertitle-name').html('').append(kayit.user_name + "<b> ");
-                      $('.profile-usertitle-job').html('').append(kayit.role);
-                      var resim=kayit.picture==""?"<button type='button' onclick='javascript:resim_ekle(\""+kayit._id+"\")' class='btn btn-info btn-sm'><i class='fa fa-x fa-plus-square'></i></button>":"<a href='javascript:resim_ekle(\""+kayit._id+"\")'><img class='resim_buyult' src='/getimg/"+kayit.picture+".jpeg'  style='width:160px;height:160px;'></a>";
-                     if(kayit.picture==""){
-                        $('#erka').attr("src","/static/img/photo.jpeg").attr("onclick","javascript:resim_ekle(\""+kayit._id+"\")");
-                     }
-                     else{
-                         //console.log("'/getimg/"+kayit.picture+".jpeg'");
-                        $('#erka').attr("src","/getimg/"+kayit.picture+".jpeg");
-                     }
-                     
-                     if(JSON.parse(session).password=="")
-                     {
-                        $('#eskisifre').attr('disabled', true);
-                     } 
-              }
+        postData('/ajax/findSome',{model:"user",id:deger,kk_id: (JSON.parse(session).kk_id)},function(kayit){  
+              console.log("0000000000");
+              console.log(kayit);
+              if(JSON.parse(session)._id == param){
+                c
+                $('.profils').show();                                             
+                $('#name').val(kayit.name);
+                $('#surname').val(kayit.surname);
+                $('#email').html('').append("<b>"+"<font size='4'>"+kayit.email+"</font>"+"</b>");
+                $('#about').val(kayit.about);
+                  var uye =kayit.role[0].role_name =="caylak" ? "Normal Üye":"";
+                $('#role').html('').append("<b>"+"<font size='4'>"+Üye+"</font>"+"</b>");
+                $('#statusabout').html('').append(kayit.about);
+                $('#date').html('').append("<b>"+"<font size='4'>"+kayit.day +"<b> / </b>"+kayit.month+"<b> / </b>"+kayit.year +"</font>"+"</b>");
+                $('.profile-usertitle-name').html('').append(kayit.user_name + "<b> ");
+                $('.profile-usertitle-job').html('').append(kayit.role);
+                 var resim=kayit.picture==""?"<button type='button' onclick='javascript:resim_ekle(\""+kayit._id+"\")' class='btn btn-info btn-sm'><i class='fa fa-x fa-plus-square'></i></button>":"<a href='javascript:resim_ekle(\""+kayit._id+"\")'><img class='resim_buyult' src='/getimg/"+kayit.picture+".jpeg'  style='width:160px;height:160px;'></a>";
+               if(kayit.picture==""){
+                  $('#erka').attr("src","/static/img/photo.jpeg").attr("onclick","javascript:resim_ekle(\""+kayit._id+"\")");
+               }
+               else{
+                   //console.log("'/getimg/"+kayit.picture+".jpeg'");
+                  $('#erka').attr("src","/getimg/"+kayit.picture+".jpeg");
+               } 
+               if(JSON.parse(session).password=="")
+               {
+                  $('#eskisifre').attr('disabled', true);
+               }           
+          }else if(kayit._id == JSON.parse(session)._id){
+               $('.profils').show();
+               $('#name').val(kayit.name);
+               $('#surname').val(kayit.surname);
+               $('#email').html('').append("<b>"+"<font size='4'>"+kayit.email+"</font>"+"</b>");
+               $('#about').val(kayit.about);
+               var uye =kayit.role[0].role_name =="caylak" ? "Normal Üye":"";
+               $('#role').html('').append("<b>"+"<font size='4'>"+uye+"</font>"+"</b>");
+               $('#statusabout').html('').append(kayit.about);
+               $('#date').html('').append("<b>"+"<font size='4'>"+kayit.day +"<b> / </b>"+kayit.month+"<b> / </b>"+kayit.year +"</font>"+"</b>");
+               $('.profile-usertitle-name').html('').append(kayit.user_name + "<b> ");
+               $('.profile-usertitle-job').html('').append(kayit.role);
+               var resim=kayit.picture==""?"<button type='button' onclick='javascript:resim_ekle(\""+kayit._id+"\")' class='btn btn-info btn-sm'><i class='fa fa-x fa-plus-square'></i></button>":"<a href='javascript:resim_ekle(\""+kayit._id+"\")'><img class='resim_buyult' src='/getimg/"+kayit.picture+".jpeg'  style='width:160px;height:160px;'></a>";
+                 if(kayit.picture==""){
+                    $('#erka').attr("src","/static/img/photo.jpeg").attr("onclick","javascript:resim_ekle(\""+kayit._id+"\")");
+                 }
+                 else{
+                     console.log("'/getimg/"+kayit.picture+".jpeg'");
+                    $('#erka').attr("src","/getimg/"+kayit.picture+".jpeg").attr("onclick","javascript:resim_ekle(\""+kayit._id+"\")");
+                 }
+               
+                 if(JSON.parse(session).password=="")
+                 {
+                    $('#eskisifre').attr('disabled', true);
+                 }
+                 if(kayit._id == JSON.parse(session)._id){
+                     $('.yenile').attr("onclick","javascript:resim_ekle(\""+kayit._id+"\")").attr("class","glyphicon glyphicon-pencil");
+                 }
+        }else if(kayit._id ==param){
+                $('.profils').html('');  
+                $('.profils').hide();                                               
+                $('#name').val(kayit.name);
+                $('#surname').val(kayit.surname);
+                $('#email').html('').append("<b>"+"<font size='4'>"+kayit.email+"</font>"+"</b>");
+                $('#about').val(kayit.about);
+                var uye =kayit.role[0].role_name =="caylak" ? "Normal Üye":"";
+                $('#role').html('').append("<b>"+"<font size='4'>"+uye+"</font>"+"</b>");
+                $('#statusabout').html('').append(kayit.about);
+                $('#date').html('').append("<b>"+"<font size='4'>"+kayit.day +"<b> / </b>"+kayit.month+"<b> / </b>"+kayit.year +"</font>"+"</b>");
+                $('.profile-usertitle-name').html('').append(kayit.user_name + "<b> ");
+                $('.profile-usertitle-job').html('').append(kayit.role);
+                var resim=kayit.picture==""?"<button type='button' onclick='javascript:resim_ekle(\""+kayit._id+"\")' class='btn btn-info btn-sm'><i class='fa fa-x fa-plus-square'></i></button>":"<a href='javascript:resim_ekle(\""+kayit._id+"\")'><img class='resim_buyult' src='/getimg/"+kayit.picture+".jpeg'  style='width:160px;height:160px;'></a>";
+               if(kayit.picture==""){
+                  $('#erka').attr("src","/static/img/photo.jpeg").attr("onclick","javascript:resim_ekle(\""+kayit._id+"\")");
+               }
+               else{
+                   //console.log("'/getimg/"+kayit.picture+".jpeg'");
+                  $('#erka').attr("src","/getimg/"+kayit.picture+".jpeg");
+               }
+               
+               if(JSON.parse(session).password=="")
+               {
+                  $('#eskisifre').attr('disabled', true);
+               } 
+        }
         });   
 
     }
