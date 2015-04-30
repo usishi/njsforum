@@ -312,10 +312,7 @@ app.get('/adm/:page',nodekk.ozelbolge,admin_check,function(req,res){
         res.redirect('/');
     }  
     
-  });
-    
-
-  
+  });  
 });
 
 app.get('/pg/:page',function(req,res){

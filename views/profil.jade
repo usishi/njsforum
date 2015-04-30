@@ -151,8 +151,9 @@ block js
         }else{
             window.location="/";
         }
-        postData('/ajax/findSome',{model:"user",id:deger,kk_id: (JSON.parse(session).kk_id)},function(kayit){  
+        postData('/ajax/findSome',{model:"user",id:deger,kk_id: (JSON.parse(session).kk_id),aktivasyon:(JSON.parse(session).aktivasyon)},function(kayit){  
               if(JSON.parse(session)._id == param){
+
                 $('.profils').show();                                             
                 $('#name').val(kayit.name);
                 $('#surname').val(kayit.surname);
@@ -176,7 +177,8 @@ block js
                {
                   $('#eskisifre').attr('disabled', true);
                }           
-          }else if(kayit._id == JSON.parse(session)._id){
+          }else if(kayit._id == JSON.parse(session)._id || kayit.kk_id == JSON.parse(session)._id){
+
                $('.profils').show();
                $('#name').val(kayit.name);
                $('#surname').val(kayit.surname);

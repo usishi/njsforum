@@ -45,11 +45,13 @@ block js
       $(document).ready(function() {
           var session='!{user}';
           deger='!{param}';
-          console.log(JSON.parse(session).user_name);
+          console.log("//////////////");
+          console.log(session);
           if(JSON.parse(session)._id =="" || JSON.parse(session)._id=="undefined" ){
             window.location="/pg/login";
           }else{
             var degerim ="!{param}";
+            console.log(degerim);
             $('.summernote').summernote({
                 height : 180,
                 focus : false,
