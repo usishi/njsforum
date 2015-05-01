@@ -144,26 +144,32 @@ block js
             }
         }
         function yorumKaydet(){
+            var username;
             var tarihsaat=new Date();
             var dtarih =tarihsaat.toLocaleString();
             if( ($('.note-editable.custom-scroll').code()=="") || (kontrol=="")){
                    mesaj_gonder("Uyarı",'Lütfen Gerekli yerlere Dolduralım ','#d3d3d3');
             }else{
                     var  text = $('.comments').html();                   
-                    var metin = $('.comments > div').html()+JSON.stringify(($('.note-editable.custom-scroll').code()));
+                    var metin = $('.comments').html()+JSON.stringify(($('.note-editable.custom-scroll').code()));
                     if(text.length > 0 ){
                       var ad     = $('.ts').html();
                       var kimlik = $('.ts1').html();
                        var yorumID = $('.ts0').html();
                       copyKaydet(yorumID,ad,kimlik);                   
                     }
+                    if(JSON.parse(kontrol).user_name)
+                      username = JSON.parse(kontrol).user_name;
+                    else
+                      username = JSON.parse(kontrol).email;
+
                     var kayit = {
                                   bolum           :"yorum",
                                   konu_id         : deger,
                                   kategori_id     : katID,
                                   ekleme_zamani   : dtarih,
                                   yorum           : metin,
-                                  ekleyen         :{"name":JSON.parse(kontrol).user_name,"id":JSON.parse(kontrol)._id},
+                                  ekleyen         :{"name":username,"id":JSON.parse(kontrol)._id},
                                   schema          :"yorum",
                                 }                               
                      postData('/ajax/save',{bilgi:kayit},function(retVal){
