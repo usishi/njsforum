@@ -40,6 +40,7 @@ var admin_check=function(req,res,next){////////veri tabanında kullanıcıyı ko
           console.log(req.session.user);
           var user_kayitmodel=mdb.model('user');
           var user           =new user_kayitmodel();
+          user._id           =req.session.user._id;
           user.name          =req.session.user.firstname;
           user.surname       =req.session.user.lastname;
           user.email         =req.session.user.email;
@@ -80,6 +81,7 @@ var user_check=function(req,res,next){////////veri tabanında kullanıcıyı kon
      else{
       var user_kayitmodel             =mdb.model('user');
       var user                        =new user_kayitmodel();
+      user._id                        =req.session.user._id;
       user.user_name                  =req.session.user.email;
       user.name                       =req.session.user.firstname;
       user.surname                    =req.session.user.lastname;
