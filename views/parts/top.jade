@@ -84,9 +84,11 @@ block js
             bildiri(say);
             msj_cevap(say);
             mesajKutusu();
-            
-            //if(JSON.parse(session).role[0].permission ==0)
-             // $('.menu3').html("").append('<a href="/adm/dashboard" data-original-title="" title="">Yönetim Paneli</a>');    
+
+            postData('/ajax/roleName',{id:JSON.parse(session)._id},function(result){
+                if(result == "admin")
+                  $('.menu3').html("").append('<a href="/adm/dashboard" data-original-title="" title="">Yönetim Paneli</a>'); 
+            });   
         }    
     });
     function cikis(){
@@ -99,9 +101,9 @@ block js
       $('.ikonlar').html();
       postData('/ajax/bildiriSayisi',{id:deger},function(veri){
           if(veri >= 0){
-               $('.ikonlar').append('<div class="bildiri3" style="position:relative; display:inline-block;"><a class="circle bildiri2" href="javascript:bildirim_pop_up();"  style="position:relative;   height: 36px; "> Bildiriler &nbsp;'+veri+'</a> <div class="uyaris gstr"></div></div> ');
-             }else{
-               $('.ikonlar').hide();
+           $('.ikonlar').append('<div class="bildiri3" style="position:relative; display:inline-block;"><a class="circle bildiri2" href="javascript:bildirim_pop_up();"  style="position:relative;   height: 36px; "> Bildiriler &nbsp;'+veri+'</a> <div class="uyaris gstr"></div></div> ');
+         }else{
+           $('.ikonlar').hide();
           }      
       })
     }
@@ -134,11 +136,9 @@ block js
       }
       var sayac=0;
       var ayId=JSON.parse(session)._id
-      postData('/ajax/bildirimEposta',{bilgi:'liste',id:ayId},function(veri){  
-        console.log(veri);
+      postData('/ajax/bildirimEposta',{bilgi:'liste',id:ayId},function(veri){
         veri.forEach(function(yaz){
           var veri2=yaz.reverse();
-          console.log(veri2); 
           for(var i=0; i<1; i++){
             if(veri2[sayac].durum==true){
               $('.uyaris').append('<li><a  onclick="bildirimChange(\''+veri2[i]._id+'\')" href="/pg/konudetay/'+veri2[i].konu_id+'">'+veri2[i].konu_baslik+'konusuna bildirim var</a></li>');

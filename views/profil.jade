@@ -118,7 +118,7 @@ block js
     var konu_sayisi =0;
     var usr         ="!{param}";
        getList(usr);       
-       console.log(session); 
+       
     if((JSON.parse(session)._id == null)){
       $('#status').html('').append("Aktif Değil");
     }else if(JSON.parse(session) ==""){
