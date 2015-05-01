@@ -63,7 +63,7 @@ block js
       var us=0,sayac=0,eleman=[];
       $('.cevrimici').html();
       postData('/ajax/sonOnline',{},function(veri){
-        console.log(veri.length);
+        console.log(veri);
          veri.forEach(function(cvp){
             
                 if(cvp.user_name !=null){

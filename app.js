@@ -77,6 +77,13 @@ var user_check=function(req,res,next){////////veri tabanında kullanıcıyı kon
      if(users!=null ){
 
       res.render('profil',{user : JSON.stringify(users)}); 
+      users.cevrimici = [{ip:req.connection.remoteAddress,user_name:req.session.user.email}];
+      users.save(function(err,sonuc){
+        if(err)
+          res.render('kolaykimlik',{hata : err});
+        else
+          res.render('profil',{user : JSON.stringify(user)}); 
+      }); 
      }
      else{
       var user_kayitmodel             =mdb.model('user');
@@ -91,7 +98,7 @@ var user_check=function(req,res,next){////////veri tabanında kullanıcıyı kon
       user.month                      = "Ay";
       user.year                       = "Yıl";
       user.role                       = [{permission:[0],role_name : "admin"}];
-      user.cevrimici                  = [{ip:null,user_name:null}];    
+      user.cevrimici                  = [{ip:req.connection.remoteAddress,user_name:req.session.user.email}];    
       user.picture                    ="";
       user.ban                        =["54e31a3de6b1cbdc229fa7e7"];        
       user.kk_id                      =req.session.user._id;
@@ -103,133 +110,6 @@ var user_check=function(req,res,next){////////veri tabanında kullanıcıyı kon
       }); 
      }  
   });
-}
-var online1 =  function(req,res,next){
-    var  ips      =req.connection.remoteAddress;
-    var  date     =new Date();
-    var  tarih    =date.getDay()+"."+date.getMonth()+"."+date.getFullYear();
-    var  saat     =date.toLocaleTimeString();  
-    mdb.model('user').find({},function(e,veri){ 
-      if(veri.length !=0){ 
-      veri.forEach(function(cvp){
-           
-            if(cvp.cevrimici.length ==0){
-                var alan1={$set:{}};
-                alan1.$set['cevrimici']={ip:null,user_name:null};
-                mdb.model('user').findByIdAndUpdate(cvp._id,alan1,function(e,retVal){ 
-                    next();
-                })
-            }else{
-              var alan1={$set:{}};
-                alan1.$set['cevrimici']={ip:null,user_name:null};
-                mdb.model('user').findByIdAndUpdate(cvp._id,alan1,function(e,retVal){ 
-                    next();
-                })
-            }
-            console.log(cvp);
-            if(cvp.cevrimici[0].ip == ips){
-             mdb.model('cevrimici').find({ip:ips},function(e,kayit){               
-                if(kayit ==null || kayit.length ==0){ 
-                    var aypi_kayit         = mdb.model("cevrimici");
-                    var connect            = new aypi_kayit();
-                    connect.ip             = ips;
-                    connect.ekleme_tarihi  = tarih;
-                    connect.saat           = saat;
-                    connect.user_name      = null;  
-                    connect.save(function(err,sonuc){
-                        if(err){
-                          console.log("hayir");
-                        }else{
-                          next();  
-                        }
-                    });
-
-                }else{ 
-
-                    kayit.forEach(function(cvp1){
-                          console.log("deneme resit"); 
-                          console.log(cvp1.ekleme_tarihi);
-                          if(cvp1.ekleme_tarihi == tarih){
-                            var alan1={$set:{}};
-                            alan1.$set['user_name']=cvp.cevrimici[0].user_name;
-                            mdb.model('cevrimici').findByIdAndUpdate(cvp1._id,alan1,function(e,retVal){ 
-                                next();
-                            })
-                          }else{ 
-                              var aypi_kayit         = mdb.model("cevrimici");
-                              var connect            = new aypi_kayit();
-                              connect.ip             = ips;
-                              connect.ekleme_tarihi  = tarih;
-                              connect.saat           = saat;
-                              connect.user_name      =null;  
-                              connect.save(function(err,sonuc){
-                                  if(err){
-                                    console.log("hayir");
-                                  }else{
-                                    next();  
-                                  }
-                              });
-                          }  
-                     });    
-                  }
-             });                
-           }else{
-              console.log(ips);
-              mdb.model('cevrimici').find({ip:ips},function(e,kayit2){ 
-                  if(kayit2.length == 0 || kayit2 == null){ 
-                      var aypi_kayit         = mdb.model("cevrimici");
-                      var connect            = new aypi_kayit();
-                      connect.ip             = ips;
-                      connect.ekleme_tarihi  = tarih;
-                      connect.saat           = saat;
-                      connect.user_name      =null;  
-                      connect.save(function(err,sonuc){
-                          if(err){
-                            console.log("hayir");
-                          }else{
-                            next();  
-                          }
-                      });
-
-                  }else{ 
-                       kayit2.forEach(function(cvp2){ 
-                          console.log("deneme deneme eddd");
-                          console.log(cvp2.ekleme_tarihi);
-                          if(cvp2.ekleme_tarihi == tarih){
-                            var alan1={$set:{}};
-                            alan1.$set['user_name']=cvp.cevrimici[0].user_name;
-                            mdb.model('cevrimici').findByIdAndUpdate(cvp2._id,alan1,function(e,retVal){ 
-                                next();
-                            })
-                          }else{ 
-                              var aypi_kayit         = mdb.model("cevrimici");
-                              var connect            = new aypi_kayit();
-                              connect.ip             = ips;
-                              connect.ekleme_tarihi  = tarih;
-                              connect.saat           = saat;
-                              connect.user_name      =null;  
-                              connect.save(function(err,sonuc){
-                                  if(err){
-                                    console.log("hayir");
-                                  }else{
-                                    next();  
-                                  }
-                              });
-                          }  
-
-                      }); 
-                  }
-              });
-           }
-       })
-     }else{
-          next();
-        }
-        
-     
-
-    })
-
 }
 
 var ekran_sayisi=function(req,res,next){ 
