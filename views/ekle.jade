@@ -45,8 +45,6 @@ block js
       $(document).ready(function() {
           var session='!{user}';
           deger='!{param}';
-          console.log("//////////////");
-          console.log(session);
           if(JSON.parse(session)._id =="" || JSON.parse(session)._id=="undefined" ){
             window.location="/pg/login";
           }else{
