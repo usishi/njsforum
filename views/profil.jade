@@ -143,15 +143,13 @@ block js
           datas();
     }); 
 
-    function datas(){
+    /*function datas(){
       var id = JSON.parse(session)._id;
       postData('/ajax/datas',{userID: id},function(result){
         $('#yorum').html('').append("<b>"+"<font size='4'>"+result.length+"</font>"+"</b>");
       });
-      postData('/ajax/konu_data',{userID: id},function(res){
-        $('#konusayisi').html('').append("<b>"+"<font size='4'>"+res.length+"</font>"+"</b>");
-      });         
-    }
+              
+    }*/
 
     function getList(param){
         var deger;
