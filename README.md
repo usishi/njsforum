@@ -1,1 +1,3 @@
-Usishi Forum v.1
+A Forum System
+
+It developed with node.js and it uses mongodb.
