@@ -183,9 +183,9 @@ app.get('/adm/:page',nodekk.ozelbolge,admin_check,function(req,res){
   mdb.model('user').find({kk_id:user._id},function(e,adm){
     if((adm != undefined) && (adm[0].role[0].role_name == "admin")){
       if(req.session.logincallbackurl != undefined)
-        res.render('dashboard/'+req.params.page,{izinler:JSON.stringify(config.izinler),user : JSON.stringify(user)});
+        res.render('dashboard/'+req.params.page,{user : JSON.stringify(user)});
       else
-        res.render('dashboard/'+req.params.page,{izinler:JSON.stringify(config.izinler),user : user});
+        res.render('dashboard/'+req.params.page,{user : user});
     }
     else {
       if(req.session.logincallbackurl != undefined)

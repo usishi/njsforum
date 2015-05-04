@@ -20,7 +20,20 @@ block pagecontent
                   .col-md-11
                     #loading-example.box.box-danger
                       .box-header
-                        // tools box
+                        .row
+                          .col-xs-4.text-center(style='border-right: 1px solid #f4f4f4')
+                           input#permission_name.form-control(type='text', placeholder='İzin Adı Giriniz')
+                           br 
+                           input#permission_id.form-control(type='text', placeholder='İzin Id Giriniz.Example(0,1,2)')
+                          .col-xs-4.text-center(style='border-right: 1px solid #f4f4f4')
+                            input#permission_url.form-control(type='text', placeholder='Url Adı Giriniz.Example(Kategori,User)')
+                            br  
+                            input#permission_pageName.form-control(type='text', placeholder='Sayfa Adı Giriniz')
+
+                          .col-xs-4(style="position:relative;right:150px;top:30px")
+                            a.pull-right.btn.btn-primary(href="javascript:addPermission()") KAYDET
+                            
+                        br    
                         .pull-right.box-tools
                           button.btn.btn-danger.btn-sm(data-widget='collapse', data-toggle='tooltip', title='Collapse')
                             i.fa.fa-minus
@@ -39,6 +52,7 @@ block pagecontent
                                 th Url
                                 th Sayfa Adı
                                 th İzin No
+                                th #
                             tbody.us
                             tfoot
                               tr
@@ -47,6 +61,7 @@ block pagecontent
                                 th Url
                                 th Sayfa Adı
                                 th İzin No
+                                th #
                         // /.box-body
                       .box-footer
                         .row
@@ -95,22 +110,40 @@ block pagecontent
       $(document).ready(function(){
         getList();
       });
+
+      function addPermission(){
+        var data = {
+            permissionName : $("#permission_name").val(),
+            permissionId   : $("#permission_id").val(),
+            permissionUrl  : $("#permission_url").val(),
+            permissionPage : $("#permission_pageName").val()
+        }
+        if(($("#permission_name").val() != "") && ($("#permission_id").val() != "") && ($("#permission_url").val() != "")){
+          postData('/ajax/permission',{data:data},function(result){
+         });
+        }
+        else{
+          mesaj_gonder('Ana Kategori','Lütfen Boş Alanları Doldurunuz.','#660000')
+        }
+      };
+
+
       function getList(){
         ////////////////////////////////izinlerin listelenmesi ////////////
-        var us=0;
-        $('.us').html("");
-        JSON.parse('!{izinler}').forEach(function(kayit){
-          us++;
-          $('.us').append('<tr>'+
-                              '<td><input id='+kayit.permission+' onclick="javascript:checkbox_change(\''+kayit.permission+'\')" type="checkbox" ></div></td>'+
-                              '<td>'+kayit.name+'</td>'+
-                              '<td>'+kayit.url+'</td>'+
-                              '<td>'+kayit.pagename+'</td>'+
-                              '<td>'+kayit.permission+'</td>'+
+        postData('/ajax/permissionList',{},function(result){
+          $('.us').html("");
+          result.forEach(function(role){
+            $('.us').append('<tr>'+
+                              '<td><input id='+role.p_id+' onclick="javascript:checkbox_change(\''+role.p_id+'\')" type="checkbox" ></div></td>'+
+                              '<td>'+role.name+'</td>'+
+                              '<td>'+role.url+'</td>'+
+                              '<td>'+role.pageName+'</td>'+
+                              '<td>'+role.p_id+'</td>'+
+                              '<td><a href="javascript:sil(\''+role._id+'\',\'permission\',\'getList\')"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>'+
                             '</tr>');
-           if(us==JSON.parse('!{izinler}').length)
-              $('#example1').dataTable();
+          });   
         });
+
         //////////////////////////////////////////////////////////////////////////
         /////////////////////////////rollerin listelenmesi ////////////////////////////
         postData('/ajax/getList',{model_list:["role"]},function(retVal){
@@ -127,6 +160,8 @@ block pagecontent
           });
         });
       }
+
+
       function checkbox_change(izin){
         if($('#'+izin).is(':checked')==true)
            us_izin.push(izin);
