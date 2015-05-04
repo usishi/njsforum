@@ -141,8 +141,8 @@ app.use(session({ secret: 'some-secret' }));
 //app.use('/captcha.jpg', captcha.generate());
 //app.use(app.router);
 app.use(nodekk.kolaykimlik({
-    consumer_key:'536cd5b5c33a4f0c19907f0c',
-    consumer_secret:'Reg/8/PyNatHnt8GcyNuPitAiud2mx27EstzmR64xng=',
+    consumer_key: config.consumer_key,
+    consumer_secret: config.consumer_secret,
     baseurl:config.kk_url//your url
 }));
 

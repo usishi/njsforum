@@ -13,5 +13,7 @@ exports.config=
 						{"name": "caylak"                 ,"url":""             ,"pagename":""  ,"permission": "9"}
 
 
-					]  
+					],
+	consumer_key:'536cd5b5c33a4f0c19907f0c',
+    consumer_secret:'Reg/8/PyNatHnt8GcyNuPitAiud2mx27EstzmR64xng='  
 }
